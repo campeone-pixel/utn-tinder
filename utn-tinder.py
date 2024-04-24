@@ -22,7 +22,8 @@ estudiante3_hobbies= []
 
 
 def login():
-   
+    estudiante_conectado = False
+    email_estudiante_conectado = ""
     intentos = 3
     while intentos > 0:
         email = input("Ingrese su email: ")
@@ -36,11 +37,11 @@ def login():
             estudiante_conectado = True
             email_estudiante_conectado = email
             
-            return
+            return estudiante_conectado, email_estudiante_conectado
         else:
             intentos -= 1
             print("Email o contraseña incorrectos. Intentos restantes:", intentos)
-    return estudiante_conectado,email_estudiante_conectado 
+    return False, "" 
 
 def editar_datos_personales():
     pass
