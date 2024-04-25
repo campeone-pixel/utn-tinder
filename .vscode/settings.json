@@ -1,0 +1,17 @@
+{
+    "window.zoomLevel": 2,
+    "editor.formatOnSave": true,
+    "[python]": { // python section  
+        "editor.rulers": [
+            88
+        ],
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "editor.formatOnType": true
+    },
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.autoSearchPaths": true,
+    "python.languageServer": "Default",
+}
