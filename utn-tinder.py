@@ -20,6 +20,18 @@ estudiante3_biografia = []
 estudiante3_hobbies = []
 
 
+def menu_principal():
+    print("1. Gestionar mi perfil")
+    print("2. Gestionar candidatos")
+    print("3. Matcheos")
+    print("4. Reportes estadísticos")
+    print("0. Salir")
+
+    opcion = int(input("Por favor, seleccione una opción:"))
+    print("\n")
+    return opcion
+
+
 def login():
     estudiante_conectado = False
     email_estudiante_conectado = ""
@@ -27,7 +39,6 @@ def login():
     while intentos > 0:
         email = input("Ingrese su email: ")
         contraseña = input("Ingrese su contraseña: ")
-
         if (
             (email == estudiante1_email and contraseña == estudiante1_contrasenia)
             or (email == estudiante2_email and contraseña == estudiante2_contrasenia)
@@ -35,78 +46,83 @@ def login():
         ):
             estudiante_conectado = True
             email_estudiante_conectado = email
-            print("inicio exitoso", email_estudiante_conectado)
+            print("inicio exitoso", email_estudiante_conectado, "\n")
             return estudiante_conectado, email_estudiante_conectado
         elif intentos == 1:
             intentos -= 1
-            print("credenciales invalidas")
+            print("credenciales invalidas\n")
             return False, ""
         else:
             intentos -= 1
-            print("Email o contraseña incorrectos. Intentos restantes:", intentos)
+            print("Email o contraseña incorrectos. Intentos restantes:", intentos, "\n")
     return False, ""
 
 
 def gestionar_perfil(estudiante_conectado, email_estudiante_conectado):
     print("1. Gestionar mi perfil")
     print("0. Volver")
-    opcion = input("Por favor, seleccione una opción: ")
-    if opcion == "1":
-        print("ya gestionamos tu perfil de " + email_estudiante_conectado.capitalize())
-        main(estudiante_conectado, email_estudiante_conectado)
-    elif opcion == "0":
-        print("Volviendo")
-        main(estudiante_conectado, email_estudiante_conectado)
-    else:
-        print("Opción no válida. Por favor, seleccione una opción válida.")
+    opcion = int(input("Por favor, seleccione una opción: "))
+    print("\n")
+    while opcion != 0:
+        if opcion == 1:
+            print(
+                "ya gestionamos tu perfil de "
+                + email_estudiante_conectado.capitalize(),
+                "\n",
+            )
+        elif opcion == 0:
+            print("Volviendo\n")
+        else:
+            print("Opción no válida. Por favor, seleccione una opción válida.")
+        print("1. Gestionar mi perfil")
+        print("0. Volver")
+        opcion = int(input("Por favor, seleccione una opción:"))
+    print("\n")
 
 
 def gestionar_candidatos(estudiante_conectado, email_estudiante_conectado):
     print("1. Gestionar candidatos")
     print("0. Volver")
-    opcion = input("Por favor, seleccione una opción: ")
-    if opcion == "1":
-        print(
-            "ya gestionamos los candidatos de "
-            + email_estudiante_conectado.capitalize()
-        )
-        main(estudiante_conectado, email_estudiante_conectado)
-    elif opcion == "0":
-        print("Volviendo")
-        main(estudiante_conectado, email_estudiante_conectado)
-    else:
-        print("Opción no válida. Por favor, seleccione una opción válida.")
+    opcion = int(input("Por favor, seleccione una opción: "))
+    print("\n")
+    while opcion != 0:
+        if opcion == 1:
+            print(
+                "ya gestionamos los candidatos de "
+                + email_estudiante_conectado.capitalize(),
+                "\n",
+            )
+        elif opcion == 0:
+            print("Volviendo\n")
+        else:
+            print("Opción no válida. Por favor, seleccione una opción válida.\n")
+        print("1. Gestionar candidatos")
+        print("0. Volver")
+        opcion = int(input("Por favor, seleccione una opción: "))
+    print("\n")
 
 
-def main(estudiante_conectado, email_estudiante_conectado):
+def main():
+    estudiante_conectado, email_estudiante_conectado = login()
     print("Perfil: " + email_estudiante_conectado.capitalize())
 
-    if estudiante_conectado:
-        print("1. Gestionar mi perfil")
-        print("2. Gestionar candidatos")
-        print("3. Matcheos")
-        print("4. Reportes estadísticos")
-        print("0. Salir")
-
-        opcion = input("Por favor, seleccione una opción: ")
-
-        if opcion == "1":
-            gestionar_perfil(estudiante_conectado, email_estudiante_conectado)
-        elif opcion == "2":
-            gestionar_candidatos(estudiante_conectado, email_estudiante_conectado)
-        elif opcion == "3":
-            print("En construccion")
-        elif opcion == "4":
-            print("En construccion")
-        elif opcion == "0":
-            print("Saliendo")
-            main(False, "")
-        else:
-            print("Opción no válida. Por favor, seleccione una opción válida.")
-    else:
-        estudiante_conectado, email_estudiante_conectado = login()  # type: ignore
-        if estudiante_conectado:
-            main(estudiante_conectado, email_estudiante_conectado)
+    while estudiante_conectado:
+        opcion = menu_principal()
+        while opcion != 0:
+            if opcion == 1:
+                gestionar_perfil(estudiante_conectado, email_estudiante_conectado)
+            elif opcion == 2:
+                gestionar_candidatos(estudiante_conectado, email_estudiante_conectado)
+            elif opcion == 3:
+                print("En construccion\n")
+            elif opcion == 4:
+                print("En construccion\n")
+            elif opcion == 5:
+                print("Saliendo\n")
+                estudiante_conectado = False
+            else:
+                print("Opción no válida. Por favor, seleccione una opción válida.\n")
+            opcion = menu_principal()
 
 
-main(False, "")
+main()
