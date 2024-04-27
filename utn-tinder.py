@@ -109,22 +109,20 @@ def gestionar_candidatos():
 def main():
     estudiante_conectado = login()
 
+    opcion = menu_principal()
     while estudiante_conectado:
-        opcion = menu_principal()
-        while opcion != 5:
-            if opcion == 1:
-                gestionar_perfil()
-            elif opcion == 2:
-                gestionar_candidatos()
-            elif opcion == 3:
-                print("En construccion\n")
-            elif opcion == 4:
-                print("En construccion\n")
-            elif opcion == 5:
-                print("Saliendo\n")
-                estudiante_conectado = False
-            else:
-                print("Opción no válida. Por favor, seleccione una opción válida.\n")
+
+        if opcion == 1:
+            gestionar_perfil()
+        elif opcion == 2:
+            gestionar_candidatos()
+        elif opcion == 3:
+            print("En construccion\n")
+        elif opcion == 4:
+            print("En construccion\n")
+        elif opcion == 5:
+            print("Saliendo\n")
+            estudiante_conectado = False
 
 
 main()
