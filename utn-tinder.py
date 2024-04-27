@@ -1,3 +1,5 @@
+import getpass
+
 estudiante1_email = "mati"
 estudiante1_contrasenia = "1"
 estudiante1_nombre = "111222"
@@ -38,7 +40,7 @@ def login():
 
     while intentos > 0:
         email = input("Ingrese su email: ")
-        contraseña = input("Ingrese su contraseña: ")
+        contraseña = getpass.getpass("Ingrese su contraseña: ")
         if (
             (email == estudiante1_email and contraseña == estudiante1_contrasenia)
             or (email == estudiante2_email and contraseña == estudiante2_contrasenia)
