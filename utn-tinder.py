@@ -46,8 +46,11 @@ def login():
         ):
             print("inicio exitoso")
             return True  # ahora  es true
+        elif intentos != 1:
+            intentos = intentos - 1
+            print("intente nuevamente")
+            print("intentos restantes:", intentos)
         else:
-            intentos -= 1
             print("credenciales invalidas\n")
             return False  # ahora  es false
 
@@ -109,20 +112,20 @@ def gestionar_candidatos():
 def main():
     estudiante_conectado = login()
 
-    opcion = menu_principal()
     while estudiante_conectado:
-
-        if opcion == 1:
-            gestionar_perfil()
-        elif opcion == 2:
-            gestionar_candidatos()
-        elif opcion == 3:
-            print("En construccion\n")
-        elif opcion == 4:
-            print("En construccion\n")
-        elif opcion == 5:
-            print("Saliendo\n")
-            estudiante_conectado = False
+        opcion = menu_principal()
+        while opcion != 5:
+            if opcion == 1:
+                gestionar_perfil()
+            elif opcion == 2:
+                gestionar_candidatos()
+            elif opcion == 3:
+                print("En construccion\n")
+            elif opcion == 4:
+                print("En construccion\n")
+        print("Saliendo")
+        print("-----------------------------------------------------------------------")
+        estudiante_conectado = False
 
 
 main()
