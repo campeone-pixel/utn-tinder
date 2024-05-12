@@ -19,6 +19,7 @@ print(
 )
 """
 
+""" 
 t_hs_p = 0
 t_hs_s = 0
 cs = 0
@@ -44,3 +45,6 @@ while planta != "*":
     cp = 0
     t_hs_p = 0
     planta = input("planta:")
+"""
+boleano = not (False)
+print(boleano)

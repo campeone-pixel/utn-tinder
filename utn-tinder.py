@@ -155,11 +155,12 @@ def gestionar_candidatos(estudiante):
             todos_estudiantes()
 
             me_gusta = input("Ingrese nombre estudiante")
-            while (
-                me_gusta != estudiante1_nombre
-                or me_gusta != estudiante2_nombre
-                or me_gusta != estudiante3_nombre
+            while not (
+                me_gusta == estudiante1_nombre
+                or me_gusta == estudiante2_nombre
+                or me_gusta == estudiante3_nombre
             ):
+                print(me_gusta, " ", estudiante1_nombre)
                 print("No existe estudiante con ese nombre")
                 todos_estudiantes()
                 me_gusta = input("Ingrese estudiante nuevamente")
