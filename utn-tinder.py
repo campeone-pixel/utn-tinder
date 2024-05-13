@@ -31,7 +31,19 @@ def menu_principal():
     print("2. Gestionar candidatos")
     print("3. Matcheos")
     print("4. Reportes estadísticos")
-    print("5. Salir")
+    print("5. Salir\n")
+
+
+def menu_gestionar_perfil():
+    print("1. Gestionar mi perfil")
+    print("2. Eliminar mi perfil")
+    print("0. Volver\n")
+
+
+def menu_gestionar_candidatos():
+    print("1. Gestionar candidatos")
+    print("2. Reportar un candidato")
+    print("0. Volver\n")
 
 
 def login():
@@ -60,16 +72,14 @@ def login():
 
 
 def gestionar_perfil():
-    print("1. Gestionar mi perfil")
-    print("2. Eliminar mi perfil")
-    print("0. Volver\n")
-
     global estudiante1_fecha_nac, estudiante1_hobbies, estudiante1_biografia
     global estudiante2_fecha_nac, estudiante2_hobbies, estudiante2_biografia
     global estudiante3_fecha_nac, estudiante3_hobbies, estudiante3_biografia
 
+    menu_gestionar_perfil()
     opcion = input("Por favor, seleccione una opción: ")
     print("---------------------------------------------------------------------------")
+
     while opcion != "0":
         if opcion == "1":
             if mail_estudiante_conectado == "estudiante1@ayed.com":
@@ -100,9 +110,8 @@ def gestionar_perfil():
             print("eliminando perfil")
         else:
             print("Opción no válida. Por favor, seleccione una opción válida.")
-        print("1. Gestionar mi perfil")
-        print("2. Eliminar mi perfil")
-        print("0. Volver\n")
+
+        menu_gestionar_perfil()
         opcion = input("Por favor, seleccione una opción: ")
         print(
             "---------------------------------------------------------------------------"
@@ -246,11 +255,10 @@ def todos_estudiantes():
 
 
 def gestionar_candidatos():
-    print("1. Gestionar candidatos")
-    print("2. Reportar un candidato")
-    print("0. Volver\n")
+    menu_gestionar_candidatos()
     opcion = input("Por favor, seleccione una opción: ")
     print("---------------------------------------------------------------------------")
+
     while opcion != "0":
         if opcion == "1":
             todos_estudiantes()
@@ -259,9 +267,8 @@ def gestionar_candidatos():
             print("En Construccion\n")
         else:
             print("Opción no válida. Por favor, seleccione una opción válida.\n")
-        print("1. Gestionar candidatos")
-        print("2. Reportar un candidato")
-        print("0. Volver\n")
+
+        menu_gestionar_candidatos()
         opcion = input("Por favor, seleccione una opción: ")
         print(
             "---------------------------------------------------------------------------"
