@@ -1,5 +1,6 @@
 import getpass
 from datetime import datetime
+import random
 
 estudiante1_email = "estudiante1@ayed.com"
 estudiante1_contrasenia = "111222"
@@ -31,7 +32,8 @@ def menu_principal():
     print("2. Gestionar candidatos")
     print("3. Matcheos")
     print("4. Reportes estadísticos")
-    print("5. Salir\n")
+    print("5. Ruleta")
+    print("6. Salir")
 
 
 def menu_gestionar_perfil():
@@ -276,11 +278,37 @@ def gestionar_candidatos():
     print("\n")
 
 
+def ruleta():
+
+    print(
+        "De 3 personas selecciona las posibiladades de cada uno, sumando la probalidades total en 100 por ciento"
+    )
+    match_personaA = int(input("Ingrese la probalidad de match con la persona A"))
+    match_personaB = int(input("Ingrese probalidad de matcheo con la persona B"))
+    match_personaC = int(input("Ingrese probalidad de matcheo con la persona C"))
+
+    while match_personaA + match_personaB + match_personaC != 100:
+        print("Las probalidades no suman 100 por ciento")
+        print(
+            "De 3 personas selecciona las posibiladades de cada uno, sumando la probalidades total en 100 por ciento"
+        )
+        match_personaA = int(input("Ingrese la probalidad de match con la persona A"))
+        match_personaB = int(input("Ingrese probalidad de matcheo con la persona B"))
+        match_personaC = int(input("Ingrese probalidad de matcheo con la persona C"))
+
+    ganador = random.choices(
+        ["Persona A", "Persona B", "Persona B"],
+        weights=[match_personaA, match_personaB, match_personaC],
+    )
+
+    print("La persona seleccionada es: ", ganador)
+
+
 def main():
     menu_principal()
     opcion = input("Por favor, seleccione una opción: ")
     print("---------------------------------------------------------------------------")
-    while opcion != "5":
+    while opcion != "6":
         if opcion == "1":
             gestionar_perfil()
         elif opcion == "2":
@@ -289,6 +317,8 @@ def main():
             print("En construccion\n")
         elif opcion == "4":
             print("En construccion\n")
+        elif opcion == "5":
+            ruleta()
         else:
             print("Opcion Invalida\n")
         menu_principal()
