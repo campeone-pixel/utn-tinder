@@ -1,3 +1,6 @@
+# TP1 Algoritmo y Estructura de Datos.
+# Integrantes:Gamero Candela, Poses Matias, Sosa Agustin, Pérez Ivo.
+
 import getpass
 from datetime import datetime
 import random
@@ -27,6 +30,7 @@ estudiante3_hobbies = "surf, andar en bici, estudiar fisica"
 mail_estudiante_conectado = ""
 
 
+# Funciones para imprimir las opciones del Menú
 def menu_principal():
     print("1. Gestionar mi perfil")
     print("2. Gestionar candidatos")
@@ -37,17 +41,21 @@ def menu_principal():
 
 
 def menu_gestionar_perfil():
-    print("1. Gestionar mi perfil")
+    print("1. Editar mis datos personales")
     print("2. Eliminar mi perfil")
     print("0. Volver\n")
 
 
 def menu_gestionar_candidatos():
-    print("1. Gestionar candidatos")
+    print("1. Ver Candidatos")
     print("2. Reportar un candidato")
     print("0. Volver\n")
 
 
+# ----------------------------------------------------------------------------
+
+
+# Funcion Inicio de sesion.
 def login():
     global mail_estudiante_conectado
     intentos = 3
@@ -73,6 +81,7 @@ def login():
             intentos = 0
 
 
+# Funcion Gestionar mi perfil ,opcion 1.
 def gestionar_perfil():
     global estudiante1_fecha_nac, estudiante1_hobbies, estudiante1_biografia
     global estudiante2_fecha_nac, estudiante2_hobbies, estudiante2_biografia
@@ -120,6 +129,7 @@ def gestionar_perfil():
         )
 
 
+# Función para guardar una variable en la función Me Gusta.
 def func_me_gusta():
     me_gusta = ""
     me_gusta = input("Ingrese nombre estudiante: ")
@@ -136,6 +146,7 @@ def func_me_gusta():
     print("\n")
 
 
+# Información de los estudiantes disponibles.
 def todos_estudiantes():
     if mail_estudiante_conectado == "estudiante1@ayed.com":
         print("Datos del Estudiante:")
@@ -256,6 +267,7 @@ def todos_estudiantes():
         print("\n")
 
 
+# Función de Gestionar Candidatos, Opcion 2.
 def gestionar_candidatos():
     menu_gestionar_candidatos()
     opcion = input("Por favor, seleccione una opción: ")
@@ -278,32 +290,43 @@ def gestionar_candidatos():
     print("\n")
 
 
+# Ruleta
 def ruleta():
+    print("Ingresar las probalidades de la persona A, B y C")
+    seguir = True
+    while seguir:
+        match_personaA = input("Ingrese la probalidad de match con la persona A")
+        match_personaB = input("Ingrese la probalidad de match con la persona B")
+        match_personaC = input("Ingrese la probalidad de match con la persona C")
+        while not (
+            match_personaA.isdigit()
+            and match_personaB.isdigit()
+            and match_personaC.isdigit()
+        ):
+            match_personaA = input("Ingrese la probalidad de match con la persona A")
+            match_personaB = input("Ingrese la probalidad de match con la persona B")
+            match_personaC = input("Ingrese la probalidad de match con la persona C")
+        match_personaA = int(match_personaA)
+        match_personaB = int(match_personaB)
+        match_personaC = int(match_personaC)
+        if match_personaA + match_personaB + match_personaC == 100:
+            ganador = random.choices(
+                ["Persona A", "Persona B", "Persona B"],
+                weights=[match_personaA, match_personaB, match_personaC],
+            )[0]
+            print("La persona seleccionada es: ", ganador)
+        else:
+            print("El porcentaje total no esta dentro del 100 por ciento")
+        respuesta = input("quiere seguir intentado? Si/No").capitalize()
+        while not (respuesta == "S" or respuesta == "N"):
+            respuesta = input("Quieres seguir intentado? S / N :").capitalize()
+        if respuesta == "S":
+            seguir = True
+        else:
+            seguir = False
 
-    print(
-        "De 3 personas selecciona las posibiladades de cada uno, sumando la probalidades total en 100 por ciento"
-    )
-    match_personaA = int(input("Ingrese la probalidad de match con la persona A"))
-    match_personaB = int(input("Ingrese probalidad de matcheo con la persona B"))
-    match_personaC = int(input("Ingrese probalidad de matcheo con la persona C"))
 
-    while match_personaA + match_personaB + match_personaC != 100:
-        print("Las probalidades no suman 100 por ciento")
-        print(
-            "De 3 personas selecciona las posibiladades de cada uno, sumando la probalidades total en 100 por ciento"
-        )
-        match_personaA = int(input("Ingrese la probalidad de match con la persona A"))
-        match_personaB = int(input("Ingrese probalidad de matcheo con la persona B"))
-        match_personaC = int(input("Ingrese probalidad de matcheo con la persona C"))
-
-    ganador = random.choices(
-        ["Persona A", "Persona B", "Persona B"],
-        weights=[match_personaA, match_personaB, match_personaC],
-    )
-
-    print("La persona seleccionada es: ", ganador)
-
-
+# Función del Menu Principal.
 def main():
     menu_principal()
     opcion = input("Por favor, seleccione una opción: ")
