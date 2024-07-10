@@ -10,7 +10,7 @@ estudiantes = [
         "1",
         "leonardo",
         "masculino",
-        "111222",
+        "1",
         "activo",
         "estudio humanidades y me gusta el pensamiento lateral",
         "historia",
@@ -136,6 +136,68 @@ estudiantes = [
     ],
 ]
 
+moderadores = [
+    ["2", "2"],  # Datos del único moderador inicial
+    ["", ""],  # Datos vacíos para el segundo moderador
+    ["", ""],  # Datos vacíos para el tercer moderador
+    ["", ""],  # Datos vacíos para el cuarto moderador
+]
+
+
+# Funciones para imprimir las opciones del Menú
+def menu_principal():
+    print("1. Gestionar mi perfil")
+    print("2. Gestionar candidatos")
+    print("3. Matcheos")
+    print("4. Reportes estadísticos")
+    print("5. Ruleta")
+    print("6. Salir")
+
+
+def menu_gestionar_perfil():
+    print("1. Editar mis datos personales")
+    print("2. Eliminar mi perfil")
+    print("0. Volver\n")
+
+
+def menu_gestionar_candidatos():
+    print("1. Ver Candidatos")
+    print("2. Reportar un candidato")
+    print("0. Volver\n")
+
+
+# Funcion Gestionar mi perfil ,opcion 1.
+def gestionar_perfil():
+
+    menu_gestionar_perfil()
+    opcion = input("Por favor, seleccione una opción: ")
+    print("---------------------------------------------------------------------------")
+    while opcion != "0":
+        if opcion == "1":
+            print("no hay ningun estudiante conectado")
+        elif opcion == "2":
+            print("eliminando perfil")
+        else:
+            print("Opción no válida. Por favor, seleccione una opción válida.")
+        menu_gestionar_perfil()
+        opcion = input("Por favor, seleccione una opción: ")
+
+
+def gestionar_candidatos():
+    menu_gestionar_candidatos()
+    opcion = input("Por favor, seleccione una opción: ")
+    print("---------------------------------------------------------------------------")
+    while opcion != "0":
+        if opcion == "1":
+            print("entro al 1")
+        elif opcion == "2":
+            print("En Construccion\n")
+        else:
+            print("Opción no válida. Por favor, seleccione una opción válida.\n")
+
+        menu_gestionar_candidatos()
+        opcion = input("Por favor, seleccione una opción: ")
+
 
 def inicializacion():
     import random
@@ -149,20 +211,22 @@ def inicializacion():
         likes[i] = fila_nueva
 
 
-def inicio_sesion(estudiantes):
+def inicio_sesion(estudiantes, moderadores):
     esta_conectado = False
     mail_estudiante_conectado = None
     intentos = 3
     while intentos > 0:
         email = input("Ingrese su email: ")
         contraseña = getpass.getpass("Ingrese su contraseña: ")
+        existe = existe_usuario(email, contraseña, estudiantes, moderadores)[0]
+        role = existe_usuario(email, contraseña, estudiantes, moderadores)[1]
 
-        if existe_usuario(email, contraseña, estudiantes):
+        if existe:
             print("inicio exitoso\n")
             mail_estudiante_conectado = email
             esta_conectado = True
             intentos = 0
-            return [mail_estudiante_conectado, esta_conectado]
+            return [mail_estudiante_conectado, esta_conectado, role]
         elif intentos != 1:
             intentos = intentos - 1
             print("intente nuevamente")
@@ -172,21 +236,48 @@ def inicio_sesion(estudiantes):
             mail_estudiante_conectado = None
             esta_conectado = False
             intentos = 0
-            return [mail_estudiante_conectado, esta_conectado]
+            return [mail_estudiante_conectado, esta_conectado, role]
 
 
-def existe_usuario(email, password, estudiantes):
+def existe_usuario(email, password, estudiantes, moderadores):
     existe = False
+    role = ""
     for i in range(8):
-        print(estudiantes[i][0])
+
         if email == estudiantes[i][0] and password == estudiantes[i][3]:
             existe = True
+            role = "estudiante"
+    for i in range(4):
 
-    return existe
+        if email == moderadores[i][0] and password == moderadores[i][1]:
+            existe = True
+            role = "moderador"
+    return [existe, role]
 
 
 def estudiante():
-    pass
+    menu_principal()
+    opcion = input("Por favor, seleccione una opción: ")
+    print("---------------------------------------------------------------------------")
+    while opcion != "6":
+        if opcion == "1":
+            gestionar_perfil()
+        elif opcion == "2":
+            gestionar_candidatos()
+        elif opcion == "3":
+            print("En construccion\n")
+        elif opcion == "4":
+            print("En construccion\n")
+        elif opcion == "5":
+            print("En construccion\n")
+        else:
+            print("Opcion Invalida\n")
+        menu_principal()
+        opcion = input("Por favor, seleccione una opción: ")
+        print(
+            "---------------------------------------------------------------------------"
+        )
+    print("Saliendo\n")
 
 
 def moderador():
@@ -194,10 +285,15 @@ def moderador():
 
 
 def main():
-    informacion_login = inicio_sesion(estudiantes)
+    informacion_login = inicio_sesion(estudiantes, moderadores)
 
-    while informacion_login[1]:
-        print("entro")
+    if informacion_login[2] == "moderador":
+        print("sos un moderador")
+    elif informacion_login[2] == "estudiante":
+
+        while informacion_login[1]:
+            estudiante()
+            informacion_login[1] = False
 
 
 main()
