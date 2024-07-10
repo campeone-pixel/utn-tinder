@@ -7,7 +7,7 @@ import random
 
 estudiantes = [
     [
-        "estudiante1@ayed.com",
+        "1",
         "leonardo",
         "masculino",
         "111222",
@@ -70,10 +70,70 @@ estudiantes = [
         "Mendoza",
         "1995/05/10",
     ],
-    [],
-    [],
-    [],
-    [],
+    [
+        "estudiante3@ayed.com",
+        "carolina",
+        "femenino",
+        "555666",
+        "activo",
+        "surf, andar en bici, estudiar física",
+        "física",
+        "surf",
+        "química",
+        "historia",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Rosario",
+        "2002/08/16",
+    ],
+    [
+        "estudiante3@ayed.com",
+        "carolina",
+        "femenino",
+        "555666",
+        "activo",
+        "surf, andar en bici, estudiar física",
+        "física",
+        "surf",
+        "química",
+        "historia",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Rosario",
+        "2002/08/16",
+    ],
+    [
+        "estudiante3@ayed.com",
+        "carolina",
+        "femenino",
+        "555666",
+        "activo",
+        "surf, andar en bici, estudiar física",
+        "física",
+        "surf",
+        "química",
+        "historia",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Rosario",
+        "2002/08/16",
+    ],
+    [
+        "estudiante3@ayed.com",
+        "carolina",
+        "femenino",
+        "555666",
+        "activo",
+        "surf, andar en bici, estudiar física",
+        "física",
+        "surf",
+        "química",
+        "historia",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Rosario",
+        "2002/08/16",
+    ],
 ]
 
 
@@ -101,8 +161,8 @@ def inicio_sesion(estudiantes):
             print("inicio exitoso\n")
             mail_estudiante_conectado = email
             esta_conectado = True
-            return [mail_estudiante_conectado, esta_conectado]
             intentos = 0
+            return [mail_estudiante_conectado, esta_conectado]
         elif intentos != 1:
             intentos = intentos - 1
             print("intente nuevamente")
@@ -111,16 +171,16 @@ def inicio_sesion(estudiantes):
             print("credenciales invalidas. Cerrando programa...")
             mail_estudiante_conectado = None
             esta_conectado = False
-            return [mail_estudiante_conectado, esta_conectado]
             intentos = 0
+            return [mail_estudiante_conectado, esta_conectado]
 
 
 def existe_usuario(email, password, estudiantes):
     existe = False
     for i in range(8):
         print(estudiantes[i][0])
-        # if email == estudiantes[i][0] and password == estudiantes[i][3]:
-        #     existe = True
+        if email == estudiantes[i][0] and password == estudiantes[i][3]:
+            existe = True
 
     return existe
 
