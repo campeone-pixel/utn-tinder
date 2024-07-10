@@ -5,29 +5,149 @@ import getpass
 from datetime import datetime
 import random
 
-estudiante1_email = "estudiante1@ayed.com"
-estudiante1_contrasenia = "111222"
-estudiante1_nombre = "leonardo"
-estudiante1_fecha_nac = "2000/08/16"
-estudiante1_biografia = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-estudiante1_hobbies = "estudio humanidades y me gusta el pensamiento lateral"
+estudiantes = [
+    [
+        "estudiante1@ayed.com",
+        "leonardo",                  
+        "masculino",                  
+        "111222",                      
+        "activo",                      
+        "estudio humanidades y me gusta el pensamiento lateral", 
+        "historia",                    
+        "fútbol",                      
+        "filosofía",                   
+        "matemáticas",                 
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", 
+        "Argentina",                   
+        "Buenos Aires",                
+        "2000/08/16"                   
+    ],
+    [
+        "estudiante2@ayed.com",
+        "julian",
+        "masculino",
+        "333444",
+        "activo",
+        "estudiar matemáticas y hacer muchos cálculos de integrales",
+        "matemáticas",
+        "ajedrez",
+        "física",
+        "literatura",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Córdoba",
+        "1987/07/11"
+    ],
+    [
+        "estudiante3@ayed.com",
+        "carolina",
+        "femenino",
+        "555666",
+        "activo",
+        "surf, andar en bici, estudiar física",
+        "física",
+        "surf",
+        "química",
+        "historia",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Rosario",
+        "2002/08/16"
+    ],
+    [
+        "estudiante4@ayed.com",
+        "martina",
+        "femenino",
+        "777888",
+        "activo",
+        "leer libros, pintar, tocar el piano",
+        "literatura",
+        "natación",
+        "arte",
+        "biología",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Argentina",
+        "Mendoza",
+        "1995/05/10"
+    ],
+    [
+        "",  // email
+        "",  // nombre
+        "",  // sexo
+        "",  // contraseña
+        "no_activo",  // estado
+        "",  // hobbies
+        "",  // materia_favorita
+        "",  // deporte_favorito
+        "",  // materia_fuerte
+        "",  // materia_debil
+        "",  // biografia
+        "",  // país
+        "",  // ciudad
+        ""   // fecha_nacimiento
+    ],
+    [
+        "",  // email
+        "",  // nombre
+        "",  // sexo
+        "",  // contraseña
+        "no_activo",  // estado
+        "",  // hobbies
+        "",  // materia_favorita
+        "",  // deporte_favorito
+        "",  // materia_fuerte
+        "",  // materia_debil
+        "",  // biografia
+        "",  // país
+        "",  // ciudad
+        ""   // fecha_nacimiento
+    ],
+    [
+        "",  // email
+        "",  // nombre
+        "",  // sexo
+        "",  // contraseña
+        "no_activo",  // estado
+        "",  // hobbies
+        "",  // materia_favorita
+        "",  // deporte_favorito
+        "",  // materia_fuerte
+        "",  // materia_debil
+        "",  // biografia
+        "",  // país
+        "",  // ciudad
+        ""   // fecha_nacimiento
+    ],
+    [
+        "",  // email
+        "",  // nombre
+        "",  // sexo
+        "",  // contraseña
+        "no_activo",  // estado
+        "",  // hobbies
+        "",  // materia_favorita
+        "",  // deporte_favorito
+        "",  // materia_fuerte
+        "",  // materia_debil
+        "",  // biografia
+        "",  // país
+        "",  // ciudad
+        ""   // fecha_nacimiento
+    ]
+];
 
-estudiante2_email = "estudiante2@ayed.com"
-estudiante2_contrasenia = "333444"
-estudiante2_nombre = "julian"
-estudiante2_fecha_nac = "1987/07/11"
-estudiante2_biografia = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-estudiante2_hobbies = "estudiar matematicas y hacer muchos calculos de integrales"
 
+def inicializacion():
+    import random
 
-estudiante3_email = "estudiante3@ayed.com"
-estudiante3_contrasenia = "555666"
-estudiante3_nombre = "carolina"
-estudiante3_fecha_nac = "2002/08/16"
-estudiante3_biografia = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-estudiante3_hobbies = "surf, andar en bici, estudiar fisica"
+    likes = [0] * 8
 
-mail_estudiante_conectado = ""
+    for i in range(8):
+        fila_nueva = [0] * 8
+        for j in range(8):
+            fila_nueva[j] = random.randint(0, 1)
+        likes[i] = fila_nueva
+
 
 
 # Funciones para imprimir las opciones del Menú
