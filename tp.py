@@ -169,7 +169,7 @@ estudiantes = [
 ]
 
 moderadores = [
-    ["admin", "admin"],
+    ["9", "9"],
     ["", ""],
     ["", ""],
     ["", ""],
@@ -587,12 +587,19 @@ def inicio_sesion(est, mod, inf_login):
                 mail = input("Ingrese su email: ")
                 contraseña = getpass.getpass("Ingrese su contraseña: ")
                 existe = existe_usuario(mail, contraseña, est, mod)
-                activo = estudiante_activo(mail, est)
-                rol = que_role(mail, contraseña, est, mod)
-                if existe and activo:
-                    print("Inicio exitoso\n")
+                if (
+                    existe
+                    and que_role(mail, contraseña, est, mod) == "estudiante"
+                    and estudiante_activo(mail, est)
+                ):
                     inf_login[0] = mail
-                    inf_login[1] = rol
+                    inf_login[1] = rol = que_role(mail, contraseña, est, mod)
+                    print("Inicio exitoso\n")
+                    intentos = 0
+                elif existe and que_role(mail, contraseña, est, mod) == "moderador":
+                    inf_login[0] = mail
+                    inf_login[1] = rol = que_role(mail, contraseña, est, mod)
+                    print("Inicio exitoso\n")
                     intentos = 0
                 elif intentos != 1:
                     intentos -= 1
@@ -613,7 +620,7 @@ def inicio_sesion(est, mod, inf_login):
 def main(est, mod, inf_login, tabla_likes):
     inicializacion(tabla_likes, est)
     imprimir_tabla(tabla_likes)
-    while inf_login[0] != "salir":
+    while inf_login[0] == "":
         inf_login[0], inf_login[1] = "", ""
         inicio_sesion(est, mod, inf_login)
         if conectado(inf_login):
@@ -640,34 +647,40 @@ def moderador(est, mod, inf_login, tabla_likes):
 
 
 def gestionar_usuario(est, mod, inf_login, tabla_likes):
-    menu_gest_user()
+    # menu_gest_user()
+
     name = input(
         "Seleccione el nombre del usuario que quiere desactivar, si no lo conoce coloque '*': "
     )
-    num_id = input(
-        "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
-    )
-    while num_id.isdigit and -2 < int(num_id) < 9:
+
+    num_id = ""
+    if name == "*":
         num_id = input(
             "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
         )
 
+        while not num_id.isdigit() or not (-1 > int(num_id) > 9):
+            num_id = input(
+                "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
+            )
+
     if name != "*" or num_id != "-1":
         if num_id != "-1":
-            eliminar_estudiantexid(num_id, est)
+            eliminar_estudiantexid(int(num_id), est)
+            imprimir_tabla(est, int(num_id))
         else:
             posicion = buscar_estudiantexnombre(name, est)
             if posicion == -1:
                 print("No existe el usuario")
             else:
                 eliminar_estudiantexid(posicion, est)
-
+                imprimir_tabla(est, posicion)
     else:
-        print("Necesitamos mas datos para eliminar al usuario")
+        print("Necesitamos más datos para eliminar al usuario")
 
 
-def menu_gest_user():
-    opcion = int("seleccione una opcion: ")
+# def menu_gest_user():
+#     opcion = int("seleccione una opcion: ")
 
 
 def gestionar_reportes():
