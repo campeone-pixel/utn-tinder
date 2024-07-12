@@ -136,7 +136,7 @@ estudiantes = [
     ],
     [
         "estudiante8@ayed.com",
-        "diego",
+        "diego2",
         "masculino",
         "444777",
         "no_activo",
@@ -152,7 +152,7 @@ estudiantes = [
     ],
     [
         "estudiante8@ayed.com",
-        "diego",
+        "diego3",
         "masculino",
         "444777",
         "no_activo",
@@ -186,18 +186,8 @@ likes = [
     [0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
-reportes = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-]
 
-informacion_login = ["", "", ""]
+informacion_login = ["", ""]
 
 
 def inicializacion(tabla_likes, est):
@@ -306,9 +296,22 @@ def buscar_estudiantexmail(email, est):
     return posicion
 
 
+def buscar_estudiantexnombre(nombre, est):
+    posicion = 0
+    while nombre != est[posicion][1] and posicion < 8:
+        posicion = posicion + 1
+    if nombre != est[posicion][1]:
+        posicion = -1
+    return posicion
+
+
 def eliminar_estudiantexmail(email, est):
     posicion = buscar_estudiantexmail(email, est)
     est[posicion][4] = "no_activo"
+
+
+def eliminar_estudiantexid(id_est, est):
+    est[id_est][4] = "no_activo"
 
 
 def agregar_estudiante(est):
@@ -330,11 +333,13 @@ def modificar_estudiante(email, est):
     posicion = buscar_estudiantexmail(email, est)
 
     imprimir_tabla(est, posicion)
+
     print("Ingrese los nuevos datos del estudiante:")
     nuevos_datos = hacer_preguntas()
     for i in range(1, 14):  # Saltar email
         if nuevos_datos[i]:
             est[posicion][i] = nuevos_datos[i]
+
     imprimir_tabla(est, posicion)
 
 
@@ -572,10 +577,6 @@ def estudiante(est, mod, tabla_likes, inf_login):
             opcion = "6"
 
 
-def moderador():
-    pass
-
-
 def inicio_sesion(est, mod, inf_login):
     opcion = ""
     while inf_login[0] == "" and opcion != "3":
@@ -618,9 +619,65 @@ def main(est, mod, inf_login, tabla_likes):
         if conectado(inf_login):
             if inf_login[1] == "moderador":
                 print("Sos un moderador")
-                moderador()
+                moderador(est, mod, inf_login, tabla_likes)
             elif inf_login[1] == "estudiante":
                 estudiante(est, mod, tabla_likes, inf_login)
+
+
+def moderador(est, mod, inf_login, tabla_likes):
+    menu_moderador()
+    opcion = input("Por favor,seleccione una opcion: ")
+    while opcion != "3":
+        if opcion == "1":
+            gestionar_usuario(est, mod, inf_login, tabla_likes)
+        elif opcion == "2":
+            gestionar_reportes()
+        else:
+            print("Opcion invalida")
+        menu_moderador()
+        opcion = input("Por favor,seleccione una opcion: ")
+    print("Saliendo\n")
+
+
+def gestionar_usuario(est, mod, inf_login, tabla_likes):
+    menu_gest_user()
+    name = input(
+        "Seleccione el nombre del usuario que quiere desactivar, si no lo conoce coloque '*': "
+    )
+    num_id = input(
+        "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
+    )
+    while num_id.isdigit and -2 < int(num_id) < 9:
+        num_id = input(
+            "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
+        )
+
+    if name != "*" or num_id != "-1":
+        if num_id != "-1":
+            eliminar_estudiantexid(num_id, est)
+        else:
+            posicion = buscar_estudiantexnombre(name, est)
+            if posicion == -1:
+                print("No existe el usuario")
+            else:
+                eliminar_estudiantexid(posicion, est)
+
+    else:
+        print("Necesitamos mas datos para eliminar al usuario")
+
+
+def menu_gest_user():
+    opcion = int("seleccione una opcion: ")
+
+
+def gestionar_reportes():
+    print("menu gest rep")
+
+
+def menu_moderador():
+    print("1. Gestionar usuarios")
+    print("2. Gestionar reportes")
+    print("3. Salir")
 
 
 main(estudiantes, moderadores, informacion_login, likes)
