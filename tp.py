@@ -186,6 +186,8 @@ likes = [
     [0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
+tabla_ids = [100, 101, 102, 103, 0, 0, 0, 0]
+
 
 informacion_login = ["", ""]
 
@@ -194,7 +196,8 @@ def inicializacion(tabla_likes, est):
     for i in range(8):
         for j in range(8):
             if (
-                estudiante_activo(est[i][0], est) and estudiante_activo(est[j][0], est)
+                estudiante_activo_por_mail(est[i][0], est)
+                and estudiante_activo_por_mail(est[j][0], est)
             ) and (est[i][0] != est[j][0]):
                 me_gusta = random.randint(0, 1)
                 tabla_likes[i][j] = me_gusta
@@ -287,7 +290,57 @@ def pedir_fecha():
     return str(anio) + "/" + mes_str + "/" + dia_str
 
 
-def buscar_estudiantexmail(email, est):
+# Función para incrementar el número de ID
+def incrementar_id(t_ids):
+    max_id = 0
+    for i in t_ids:
+        if i > max_id:
+            max_id = i
+    return max_id + 1
+
+
+# Función para buscar el número de ID según la posición en el array
+def buscar_id(t_ids, posicion):
+    if (
+        posicion >= 0 and posicion < 8
+    ):  # Usamos 8 porque sabemos que la longitud del array es 8
+        return t_ids[posicion]
+    else:
+        return None  # Retornar None si la posición es inválida
+
+
+# Función para modificar un número de ID según la posición en el array
+def modificar_id(t_ids, posicion):
+    if (
+        posicion >= 0 and posicion < 8
+    ):  # Usamos 8 porque sabemos que la longitud del array es 8
+        nuevo_id = incrementar_id(t_ids)
+        t_ids[posicion] = nuevo_id
+        return True  # Retornar True si la modificación fue exitosa
+    else:
+        return False  # Retornar False si la posición es inválida
+
+
+def indice_de_estudiante_por_id(id_est, t_ids):
+    posicion = 0
+    while posicion < 8 and t_ids[posicion] != id_est:
+        posicion += 1
+    if posicion < 8:
+        return posicion
+    else:
+        return -1
+
+
+# Función para eliminar estudiante por su ID
+def eliminar_estudiante_por_id(id_est, est, t_ids):
+    posicion = indice_de_estudiante_por_id(id_est, t_ids)
+    if posicion != -1:
+        est[posicion][4] = "no_activo"
+    else:
+        print("No existe el estudiante con ese ID")
+
+
+def buscar_estudiante_por_mail(email, est):
     posicion = 0
     while email != est[posicion][0] and posicion < 8:
         posicion = posicion + 1
@@ -296,7 +349,7 @@ def buscar_estudiantexmail(email, est):
     return posicion
 
 
-def buscar_estudiantexnombre(nombre, est):
+def buscar_estudiante_por_nombre(nombre, est):
     posicion = 0
     while nombre != est[posicion][1] and posicion < 8:
         posicion = posicion + 1
@@ -305,12 +358,12 @@ def buscar_estudiantexnombre(nombre, est):
     return posicion
 
 
-def eliminar_estudiantexmail(email, est):
-    posicion = buscar_estudiantexmail(email, est)
+def eliminar_estudiante_por_email(email, est):
+    posicion = buscar_estudiante_por_mail(email, est)
     est[posicion][4] = "no_activo"
 
 
-def eliminar_estudiantexid(id_est, est):
+def eliminar_estudiante_por_indice(id_est, est):
     est[id_est][4] = "no_activo"
 
 
@@ -322,17 +375,13 @@ def agregar_estudiante(est):
             posicion = i
         i += 1
 
-    imprimir_tabla(est, posicion)
     nuevos_datos = hacer_preguntas(nuevo=True)
     for i in range(14):
         est[posicion][i] = nuevos_datos[i]
-    imprimir_tabla(est, posicion)
 
 
-def modificar_estudiante(email, est):
-    posicion = buscar_estudiantexmail(email, est)
-
-    imprimir_tabla(est, posicion)
+def modificar_estudiante_por_mail(email, est):
+    posicion = buscar_estudiante_por_mail(email, est)
 
     print("Ingrese los nuevos datos del estudiante:")
     nuevos_datos = hacer_preguntas()
@@ -340,12 +389,10 @@ def modificar_estudiante(email, est):
         if nuevos_datos[i]:
             est[posicion][i] = nuevos_datos[i]
 
-    imprimir_tabla(est, posicion)
 
-
-def estudiante_activo(email, est):
+def estudiante_activo_por_mail(email, est):
     valor = False
-    posicion = buscar_estudiantexmail(email, est)
+    posicion = buscar_estudiante_por_mail(email, est)
     if est[posicion][4] == "activo":
         valor = True
     return valor
@@ -451,7 +498,7 @@ def imprimir_datos_estudiante(un_estudiante):
 
 def ver_candidatos(est, tabla_likes, inf_login):
     for x in range(8):
-        if est[x][0] != inf_login[0] and estudiante_activo(est[x][0], est):
+        if est[x][0] != inf_login[0] and estudiante_activo_por_mail(est[x][0], est):
             imprimir_datos_estudiante(est[x])
             func_me_gusta(est, tabla_likes, inf_login, x)
     print("no hay mas estudiantes para matchear")
@@ -462,7 +509,7 @@ def func_me_gusta(est, tabla_likes, inf_login, match):
     while respuesta != "s" and respuesta != "n":
         respuesta = input("¿Desea hacer match? (s/n): ").lower()
         if respuesta == "s":
-            posicio_estud_conec = buscar_estudiantexmail(inf_login[0], est)
+            posicio_estud_conec = buscar_estudiante_por_mail(inf_login[0], est)
             tabla_likes[posicio_estud_conec][match] = 1
 
 
@@ -530,10 +577,10 @@ def gestionar_perfil(est, inf_login):
     while opcion != "0":
         opcion = imprimir_menu_gestionar_perfil()
         if opcion == "1":
-            modificar_estudiante(inf_login[0], est)
+            modificar_estudiante_por_mail(inf_login[0], est)
         elif opcion == "2":
             print("Eliminando perfil")
-            eliminar_estudiantexmail(inf_login[0], est)
+            eliminar_estudiante_por_email(inf_login[0], est)
             inf_login[0] = ""
             opcion = "0"
         elif opcion != "0":
@@ -546,7 +593,7 @@ def gestionar_candidatos(est, tabla_likes, inf_login):
         opcion = imprimir_menu_gestionar_candidatos()
         if opcion == "1":
             ver_candidatos(est, tabla_likes, inf_login)
-            imprimir_tabla(tabla_likes)
+
         elif opcion == "2":
             print("En Construccion\n")
         elif opcion != "0":
@@ -590,15 +637,15 @@ def inicio_sesion(est, mod, inf_login):
                 if (
                     existe
                     and que_role(mail, contraseña, est, mod) == "estudiante"
-                    and estudiante_activo(mail, est)
+                    and estudiante_activo_por_mail(mail, est)
                 ):
                     inf_login[0] = mail
-                    inf_login[1] = rol = que_role(mail, contraseña, est, mod)
+                    inf_login[1] = que_role(mail, contraseña, est, mod)
                     print("Inicio exitoso\n")
                     intentos = 0
                 elif existe and que_role(mail, contraseña, est, mod) == "moderador":
                     inf_login[0] = mail
-                    inf_login[1] = rol = que_role(mail, contraseña, est, mod)
+                    inf_login[1] = que_role(mail, contraseña, est, mod)
                     print("Inicio exitoso\n")
                     intentos = 0
                 elif intentos != 1:
@@ -617,26 +664,26 @@ def inicio_sesion(est, mod, inf_login):
             print("Opción no válida. Por favor, ingrese una opción válida (1, 2, o 3).")
 
 
-def main(est, mod, inf_login, tabla_likes):
+def main(est, mod, inf_login, tabla_likes, t_ids):
     inicializacion(tabla_likes, est)
-    imprimir_tabla(tabla_likes)
+
     while inf_login[0] == "":
         inf_login[0], inf_login[1] = "", ""
         inicio_sesion(est, mod, inf_login)
         if conectado(inf_login):
             if inf_login[1] == "moderador":
                 print("Sos un moderador")
-                moderador(est, mod, inf_login, tabla_likes)
+                moderador(est, mod, inf_login, tabla_likes, t_ids)
             elif inf_login[1] == "estudiante":
                 estudiante(est, mod, tabla_likes, inf_login)
 
 
-def moderador(est, mod, inf_login, tabla_likes):
+def moderador(est, mod, inf_login, tabla_likes, t_ids):
     menu_moderador()
     opcion = input("Por favor,seleccione una opcion: ")
     while opcion != "3":
         if opcion == "1":
-            gestionar_usuario(est, mod, inf_login, tabla_likes)
+            gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids)
         elif opcion == "2":
             gestionar_reportes()
         else:
@@ -646,36 +693,32 @@ def moderador(est, mod, inf_login, tabla_likes):
     print("Saliendo\n")
 
 
-def gestionar_usuario(est, mod, inf_login, tabla_likes):
+def gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids):
     # menu_gest_user()
 
     name = input(
         "Seleccione el nombre del usuario que quiere desactivar, si no lo conoce coloque '*': "
     )
 
-    num_id = ""
-    if name == "*":
-        num_id = input(
-            "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
-        )
+    if name != "*":
+        posicion = buscar_estudiante_por_nombre(name, est)
+        if posicion == -1:
+            print("no existe ese estudiante")
+        else:
+            eliminar_estudiante_por_indice(posicion, est)
 
-        while not num_id.isdigit() or not (-1 > int(num_id) > 9):
-            num_id = input(
-                "Seleccione el numero de id del usuario que quiere desactivar, si no lo conoce coloque '-1': "
+    if name == "*":
+        id_est = input(
+            "Seleccione el id del usuario que quiere desactivar, si no lo conoce coloque '0': "
+        )
+        while not id_est.isdigit():
+            id_est = input(
+                "Seleccione el id del usuario que quiere desactivar, si no lo conoce coloque '0': "
             )
 
-    if name != "*" or num_id != "-1":
-        if num_id != "-1":
-            eliminar_estudiantexid(int(num_id), est)
-            imprimir_tabla(est, int(num_id))
-        else:
-            posicion = buscar_estudiantexnombre(name, est)
-            if posicion == -1:
-                print("No existe el usuario")
-            else:
-                eliminar_estudiantexid(posicion, est)
-                imprimir_tabla(est, posicion)
-    else:
+        eliminar_estudiante_por_id(int(id_est), est, t_ids)
+        imprimir_tabla(est)
+    if name == "*" and id_est == -1:
         print("Necesitamos más datos para eliminar al usuario")
 
 
@@ -693,7 +736,7 @@ def menu_moderador():
     print("3. Salir")
 
 
-main(estudiantes, moderadores, informacion_login, likes)
+main(estudiantes, moderadores, informacion_login, likes, tabla_ids)
 
 
 imprimir_tabla(estudiantes, 0)
