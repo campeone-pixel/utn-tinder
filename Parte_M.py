@@ -187,8 +187,8 @@ likes = [
 
 tabla_ids = [100, 101, 102, 103, 0, 0, 0, 0]
 
-tabla_reportes = [0, 0, 0, 0, 0, 0, 0, 0,]
 
+tabla_reportes = [["0"] * 3 for n in range(56)]
 
 informacion_login = ["", ""]
 
@@ -695,7 +695,6 @@ def moderador(est, mod, inf_login, tabla_likes, t_ids):
 
 
 def gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids):
-    
 
     name = input(
         "Seleccione el nombre del usuario que quiere desactivar, si no lo conoce coloque '*': "
@@ -707,7 +706,7 @@ def gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids):
             print("no existe ese estudiante")
         else:
             eliminar_estudiante_por_indice(posicion, est)
-            print ("Estudiante eliminado\n ")
+            print("Estudiante eliminado\n ")
 
     if name == "*":
         id_est = input(
@@ -725,53 +724,56 @@ def gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids):
 
 
 def menu_gest_user():
-    print ("a_ Desactivar usuario.")
-    print ("b_ Volver.")
-    opcion=input ("Seleccione una opcion: ")
+    print("a_ Desactivar usuario.")
+    print("b_ Volver.")
+    opcion = input("Seleccione una opcion: ")
     while opcion != "b":
-        if opcion == "a": 
-            gestionar_usuario (estudiantes, moderadores, informacion_login, likes, tabla_ids)
-            print ("a_ Desactivar usuario.")
-            print ("b_ Volver.") 
-            opcion=input ("Seleccione una opcion: ")
+        if opcion == "a":
+            gestionar_usuario(
+                estudiantes, moderadores, informacion_login, likes, tabla_ids
+            )
+            print("a_ Desactivar usuario.")
+            print("b_ Volver.")
+            opcion = input("Seleccione una opcion: ")
         else:
-            opcion=input ("Seleccione una opcion: ")
-    print ("saliendo")
+            opcion = input("Seleccione una opcion: ")
+    print("saliendo")
 
 
 def gestionar_reportes():
     print("a. Ver Reportes")
     print("b. Volver")
-    opcion=input("Selecione una opcion: ")
+    opcion = input("Selecione una opcion: ")
 
-    while opcion!= "a" and opcion!="b":
+    while opcion != "a" and opcion != "b":
         print("a. Ver Reportes")
         print("b. Volver")
-        opcion=input("Selecione una opcion: ")
-        
-    while opcion =="a":
+        opcion = input("Selecione una opcion: ")
+
+    while opcion == "a":
         ver_reportes(tabla_reportes)
         print("a. Ver Reportes")
         print("b. Volver")
-        opcion=input("Selecione una otra opcion: ")
+        opcion = input("Selecione una otra opcion: ")
+
 
 def ver_reportes(reportes):
-    for i in range (8):
-        if tabla_reportes [i]==0:
-            print ("Usuario con id, ",[i]," = ",tabla_reportes[i])
-            print ("Quiere ignorar el reporte? '2', Quiere desactivar el usuario? '1'")
-            opcion = input ("Seleccione una opcion: ")
+    for i in range(8):
+        if tabla_reportes[i] == 0:
+            print("Usuario con id, ", [i], " = ", tabla_reportes[i])
+            print("Quiere ignorar el reporte? '2', Quiere desactivar el usuario? '1'")
+            opcion = input("Seleccione una opcion: ")
             while opcion != "1" and opcion != "2":
                 print("Opcion invalida.")
-                opcion = input ("Seleccione una opcion: ")
+                opcion = input("Seleccione una opcion: ")
             if opcion == "1":
                 eliminar_estudiante_por_indice(i, estudiantes)
-                tabla_reportes [i]= 1
+                tabla_reportes[i] = 1
             elif opcion == "2":
-                tabla_reportes [i]= 2  
-    for i in range (8):
-        print (tabla_reportes[i])  
-        print (estudiantes [i][4]) 
+                tabla_reportes[i] = 2
+    for i in range(8):
+        print(tabla_reportes[i])
+        print(estudiantes[i][4])
 
 
 def menu_moderador():

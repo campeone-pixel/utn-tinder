@@ -490,7 +490,7 @@ def imprimir_datos_estudiante(un_estudiante):
     print("País:", un_estudiante[PAIS])
     print("Ciudad:", un_estudiante[CIUDAD])
     edad = calcular_edad(un_estudiante[FECHA_NACIMIENTO])
-    if edad is not None:
+    if edad:
         print("Edad:", edad)
     else:
         print("Fecha de nacimiento inválida:", un_estudiante[FECHA_NACIMIENTO])
