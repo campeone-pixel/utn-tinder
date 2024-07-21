@@ -188,7 +188,7 @@ likes = [
 tabla_ids = [100, 101, 102, 103, 0, 0, 0, 0]
 
 
-tabla_reportes = [["0"] * 3 for n in range(56)]
+tabla_reportes = [[""] * 3 for n in range(56)]
 
 informacion_login = ["", ""]
 
@@ -210,7 +210,7 @@ def imprimir_tabla(array, fila=None):
     if not array:
         print("El array está vacío.")
         return
-    # Calcular el ancho máximo de cada columna considerando todas las filas
+
     max_columns = max(len(row) for row in array)
     col_widths = [0] * max_columns
     for row in array:
@@ -300,47 +300,6 @@ def incrementar_id(t_ids):
     return max_id + 1
 
 
-# Función para buscar el número de ID según la posición en el array
-def buscar_id(t_ids, posicion):
-    if (
-        posicion >= 0 and posicion < 8
-    ):  # Usamos 8 porque sabemos que la longitud del array es 8
-        return t_ids[posicion]
-    else:
-        return None  # Retornar None si la posición es inválida
-
-
-# Función para modificar un número de ID según la posición en el array
-def modificar_id(t_ids, posicion):
-    if (
-        posicion >= 0 and posicion < 8
-    ):  # Usamos 8 porque sabemos que la longitud del array es 8
-        nuevo_id = incrementar_id(t_ids)
-        t_ids[posicion] = nuevo_id
-        return True  # Retornar True si la modificación fue exitosa
-    else:
-        return False  # Retornar False si la posición es inválida
-
-
-def indice_de_estudiante_por_id(id_est, t_ids):
-    posicion = 0
-    while posicion < 8 and t_ids[posicion] != id_est:
-        posicion += 1
-    if posicion < 8:
-        return posicion
-    else:
-        return -1
-
-
-# Función para eliminar estudiante por su ID
-def eliminar_estudiante_por_id(id_est, est, t_ids):
-    posicion = indice_de_estudiante_por_id(id_est, t_ids)
-    if posicion != -1:
-        est[posicion][4] = "no_activo"
-    else:
-        print("No existe el estudiante con ese ID")
-
-
 def buscar_estudiante_por_mail(email, est):
     posicion = 0
     while email != est[posicion][0] and posicion < 8:
@@ -368,7 +327,38 @@ def eliminar_estudiante_por_indice(id_est, est):
     est[id_est][4] = "no_activo"
 
 
-def agregar_estudiante(est):
+def buscar_id(t_ids, posicion):
+    if posicion >= 0 and posicion < 8:
+        return t_ids[posicion]
+    else:
+        return None
+
+
+def modificar_id(t_ids, posicion):
+    if posicion >= 0 and posicion < 8:
+        nuevo_id = incrementar_id(t_ids)
+        t_ids[posicion] = nuevo_id
+
+
+def indice_de_estudiante_por_id(id_est, t_ids):
+    posicion = 0
+    while posicion < 8 and t_ids[posicion] != id_est:
+        posicion += 1
+    if posicion < 8:
+        return posicion
+    else:
+        return -1
+
+
+def eliminar_estudiante_por_id(id_est, est, t_ids):
+    posicion = indice_de_estudiante_por_id(id_est, t_ids)
+    if posicion != -1:
+        est[posicion][4] = "no_activo"
+    else:
+        print("No existe el estudiante con ese ID")
+
+
+def agregar_estudiante(est, t_ids):
     posicion = -1
     i = 0
     while i < 8 and posicion == -1:
@@ -376,9 +366,10 @@ def agregar_estudiante(est):
             posicion = i
         i += 1
 
-    nuevos_datos = hacer_preguntas(nuevo=True)
+    nuevos_datos = hacer_preguntas(nuevo=True, est=est)
     for i in range(14):
         est[posicion][i] = nuevos_datos[i]
+    modificar_id(t_ids, posicion)
 
 
 def modificar_estudiante_por_mail(email, est):
@@ -386,7 +377,7 @@ def modificar_estudiante_por_mail(email, est):
 
     print("Ingrese los nuevos datos del estudiante:")
     nuevos_datos = hacer_preguntas()
-    for i in range(1, 14):  # Saltar email
+    for i in range(1, 14):
         if nuevos_datos[i]:
             est[posicion][i] = nuevos_datos[i]
 
@@ -399,7 +390,7 @@ def estudiante_activo_por_mail(email, est):
     return valor
 
 
-def hacer_preguntas(nuevo=False):
+def hacer_preguntas(nuevo=False, est=None):
     datos = [""] * 14
     campos = [
         "email",
@@ -419,11 +410,16 @@ def hacer_preguntas(nuevo=False):
     ]
 
     for i in range(14):
-        if i == 0 and not nuevo:  # Saltar email en modificación
+        if i == 0 and not nuevo:
             datos[i] = ""
         else:
             if nuevo:
-                datos[i] = input("Ingrese " + campos[i] + ": ")
+                if i == 0:
+                    datos[i] = input("Ingrese " + campos[i] + ": ")
+                    while buscar_estudiante_por_mail(datos[i], est) != -1:
+                        datos[i] = input("Ingrese " + campos[i] + ": ")
+                else:
+                    datos[i] = input("Ingrese " + campos[i] + ": ")
             else:
                 respuesta = ""
                 while respuesta != "s" and respuesta != "n":
@@ -514,6 +510,43 @@ def func_me_gusta(est, tabla_likes, inf_login, match):
             tabla_likes[posicio_estud_conec][match] = 1
 
 
+def reportar_candidato(est, tabla_reportes, inf_login):
+    continuar = True
+
+    while continuar:
+        email_reportado = input("Ingrese el email del candidato que desea reportar: ")
+        if email_reportado == "":
+            print("No se ingresó email. Terminando el reporte.")
+            continuar = False
+        else:
+            posicion_reportado = buscar_estudiante_por_mail(email_reportado, est)
+            if posicion_reportado == -1 or not estudiante_activo_por_mail(
+                email_reportado, est
+            ):
+                print("El email ingresado no corresponde a un candidato activo.")
+                continuar = False
+            else:
+                mensaje = input("Ingrese el motivo del reporte: ")
+
+                i = 0
+                espacio_encontrado = False
+
+                while i < 55:
+                    if tabla_reportes[i][0] == "":
+                        tabla_reportes[i][0] = email_reportado
+                        tabla_reportes[i][1] = mensaje
+                        tabla_reportes[i][2] = "0"
+                        print("Reporte enviado exitosamente.")
+                        espacio_encontrado = True
+                        continuar = False
+                        i = 55
+                    else:
+                        i += 1
+
+                if not espacio_encontrado and i >= 8:
+                    print("No hay espacio para más reportes.")
+
+
 def imprimir_menu_inicio_sesion():
     print("Seleccione una opción:")
     print("1. Iniciar sesión")
@@ -596,9 +629,28 @@ def gestionar_candidatos(est, tabla_likes, inf_login):
             ver_candidatos(est, tabla_likes, inf_login)
 
         elif opcion == "2":
-            print("En Construccion\n")
+            reportar_candidato(est, tabla_reportes, inf_login)
         elif opcion != "0":
             print("Opción no válida. Por favor, seleccione una opción válida.\n")
+
+
+def reporte_estadistico(est, mod, tabla_likes, inf_login):
+    match_correspondidos = 0
+    likes_no_correspondido = 0
+    likes_no_reciprocos = 0
+    posicion = buscar_estudiante_por_mail(inf_login[0], est)
+    for i in range(8):
+
+        if tabla_likes[posicion][i] == 1 and tabla_likes[i][posicion] == 1:
+            match_correspondidos += 1
+        elif tabla_likes[posicion][i] == 1 and tabla_likes[i][posicion] == 0:
+            likes_no_correspondido += 1
+        elif tabla_likes[posicion][i] == 0 and tabla_likes[i][posicion] == 1:
+            likes_no_reciprocos += 1
+
+    print("Match correspondidos:", match_correspondidos)
+    print("Likes no correspondidos:", likes_no_correspondido)
+    print("Likes no recíprocos:", likes_no_reciprocos)
 
 
 def estudiante(est, mod, tabla_likes, inf_login):
@@ -614,7 +666,7 @@ def estudiante(est, mod, tabla_likes, inf_login):
         elif opcion == "3":
             print("En construcción\n")
         elif opcion == "4":
-            print("En construcción\n")
+            reporte_estadistico(est, mod, tabla_likes, inf_login)
         elif opcion == "5":
             print("En construcción\n")
         elif opcion == "6":
@@ -625,7 +677,7 @@ def estudiante(est, mod, tabla_likes, inf_login):
             opcion = "6"
 
 
-def inicio_sesion(est, mod, inf_login):
+def inicio_sesion(est, mod, t_ids, inf_login):
     opcion = ""
     while inf_login[0] == "" and opcion != "3":
         opcion = imprimir_menu_inicio_sesion()
@@ -657,7 +709,9 @@ def inicio_sesion(est, mod, inf_login):
                     print("Credenciales inválidas.")
                     intentos = 0
         elif opcion == "2":
-            print("Funcionalidad de registro aún no implementada.")
+            registro(est, inf_login, t_ids)
+            imprimir_tabla(est)
+            print("registro exitoso")
         elif opcion == "3":
             print("Saliendo del programa...")
             inf_login[0] = "salir"
@@ -665,12 +719,16 @@ def inicio_sesion(est, mod, inf_login):
             print("Opción no válida. Por favor, ingrese una opción válida (1, 2, o 3).")
 
 
+def registro(est, inf_login, t_ids):
+    agregar_estudiante(est, t_ids)
+
+
 def main(est, mod, inf_login, tabla_likes, t_ids):
     inicializacion(tabla_likes, est)
 
     while inf_login[0] == "":
         inf_login[0], inf_login[1] = "", ""
-        inicio_sesion(est, mod, inf_login)
+        inicio_sesion(est, mod, t_ids, inf_login)
         if conectado(inf_login):
             if inf_login[1] == "moderador":
                 print("Sos un moderador")
@@ -679,23 +737,35 @@ def main(est, mod, inf_login, tabla_likes, t_ids):
                 estudiante(est, mod, tabla_likes, inf_login)
 
 
+def imprimir_menu_moderador():
+    print("1. Gestionar usuarios")
+    print("2. Gestionar reportes")
+    print("3. Salir\n")
+    opcion = input("Por favor, seleccione una opción: ")
+    while not (opcion == "1" or opcion == "2" or opcion == "3"):
+        print("Opción no válida. Por favor, seleccione una opción válida.")
+        opcion = input("Por favor, seleccione una opción: ")
+    os.system("cls")
+    return opcion
+
+
 def moderador(est, mod, inf_login, tabla_likes, t_ids):
-    menu_moderador()
-    opcion = input("Por favor,seleccione una opcion: ")
+    opcion = ""
     while opcion != "3":
+        opcion = imprimir_menu_moderador()
         if opcion == "1":
-            menu_gest_user()
+            menu_gest_user(est, mod, inf_login, tabla_likes, t_ids)
         elif opcion == "2":
-            gestionar_reportes()
+            gestionar_reportes(est, mod)
+        elif opcion == "3":
+            inf_login[0] = ""
         else:
-            print("Opcion invalida")
-        menu_moderador()
-        opcion = input("Por favor,seleccione una opcion: ")
-    print("Saliendo\n")
+            print("Opción no válida. Por favor, seleccione una opción válida.")
+        if not conectado(inf_login):
+            opcion = "3"
 
 
-def gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids):
-
+def desactivar_usuario(est, mod, inf_login, tabla_likes, t_ids):
     name = input(
         "Seleccione el nombre del usuario que quiere desactivar, si no lo conoce coloque '*': "
     )
@@ -703,83 +773,82 @@ def gestionar_usuario(est, mod, inf_login, tabla_likes, t_ids):
     if name != "*":
         posicion = buscar_estudiante_por_nombre(name, est)
         if posicion == -1:
-            print("no existe ese estudiante")
+            print("No existe ese estudiante")
         else:
             eliminar_estudiante_por_indice(posicion, est)
-            print("Estudiante eliminado\n ")
+            print("Estudiante eliminado\n")
 
     if name == "*":
         id_est = input(
-            "Seleccione el id del usuario que quiere desactivar, si no lo conoce coloque '0': "
+            "Seleccione el ID del usuario que quiere desactivar, si no lo conoce coloque '0': "
         )
         while not id_est.isdigit():
             id_est = input(
-                "Seleccione el id del usuario que quiere desactivar, si no lo conoce coloque '0': "
+                "Seleccione el ID del usuario que quiere desactivar, si no lo conoce coloque '0': "
             )
 
         eliminar_estudiante_por_id(int(id_est), est, t_ids)
         imprimir_tabla(est)
+
     if name == "*" and id_est == -1:
         print("Necesitamos más datos para eliminar al usuario")
 
 
-def menu_gest_user():
-    print("a_ Desactivar usuario.")
-    print("b_ Volver.")
-    opcion = input("Seleccione una opcion: ")
-    while opcion != "b":
-        if opcion == "a":
-            gestionar_usuario(
-                estudiantes, moderadores, informacion_login, likes, tabla_ids
-            )
-            print("a_ Desactivar usuario.")
-            print("b_ Volver.")
-            opcion = input("Seleccione una opcion: ")
+def menu_gest_user(est, mod, inf_login, tabla_likes, t_ids):
+    print("1. Desactivar usuario.")
+    print("2. Volver.")
+    opcion = input("Seleccione una opción: ")
+    while opcion != "2":
+        if opcion == "1":
+            desactivar_usuario(est, mod, inf_login, tabla_likes, t_ids)
+            print("1. Desactivar usuario.")
+            print("2. Volver.")
+            opcion = input("Seleccione una opción: ")
         else:
-            opcion = input("Seleccione una opcion: ")
-    print("saliendo")
+            opcion = input("Seleccione una opción: ")
+    print("Saliendo\n")
 
 
-def gestionar_reportes():
-    print("a. Ver Reportes")
-    print("b. Volver")
-    opcion = input("Selecione una opcion: ")
+def gestionar_reportes(est, mod):
+    print("1. Ver Reportes")
+    print("2. Volver")
+    opcion = input("Seleccione una opción: ")
 
-    while opcion != "a" and opcion != "b":
-        print("a. Ver Reportes")
-        print("b. Volver")
-        opcion = input("Selecione una opcion: ")
+    while opcion != "1" and opcion != "2":
+        print("1. Ver Reportes")
+        print("2. Volver")
+        opcion = input("Seleccione una opción: ")
 
-    while opcion == "a":
-        ver_reportes(tabla_reportes)
-        print("a. Ver Reportes")
-        print("b. Volver")
-        opcion = input("Selecione una otra opcion: ")
+    while opcion == "1":
+        ver_reportes(tabla_reportes, est)
+        print("1. Ver Reportes")
+        print("2. Volver")
+        opcion = input("Seleccione otra opción: ")
 
 
-def ver_reportes(reportes):
-    for i in range(8):
-        if tabla_reportes[i] == 0:
-            print("Usuario con id, ", [i], " = ", tabla_reportes[i])
-            print("Quiere ignorar el reporte? '2', Quiere desactivar el usuario? '1'")
-            opcion = input("Seleccione una opcion: ")
+def ver_reportes(reportes, est):
+    for i in range(56):
+        if reportes[i][2] == "0":
+            print("Reporte sin revisar:")
+            print("Usuario reportado:", reportes[i][0])
+            print("Motivo del reporte:", reportes[i][1])
+            print("¿Quiere ignorar el reporte? '2', ¿Quiere desactivar el usuario? '1'")
+
+            opcion = input("Seleccione una opción: ")
             while opcion != "1" and opcion != "2":
-                print("Opcion invalida.")
-                opcion = input("Seleccione una opcion: ")
+                print("Opción inválida.")
+                opcion = input("Seleccione una opción: ")
+
             if opcion == "1":
-                eliminar_estudiante_por_indice(i, estudiantes)
-                tabla_reportes[i] = 1
+                email_reportado = reportes[i][0]
+                posicion_reportado = buscar_estudiante_por_mail(email_reportado, est)
+                if posicion_reportado != -1:
+                    eliminar_estudiante_por_indice(posicion_reportado, est)
+                    reportes[i][2] = "1"
             elif opcion == "2":
-                tabla_reportes[i] = 2
-    for i in range(8):
-        print(tabla_reportes[i])
-        print(estudiantes[i][4])
+                reportes[i][2] = "2"
 
-
-def menu_moderador():
-    print("1. Gestionar usuarios")
-    print("2. Gestionar reportes")
-    print("3. Salir")
+            print("Reporte actualizado.")
 
 
 main(estudiantes, moderadores, informacion_login, likes, tabla_ids)
