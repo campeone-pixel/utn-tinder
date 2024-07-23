@@ -4,6 +4,25 @@ import random
 
 import os
 
+"""
+Tipos de arreglos:
+ed: array [8] of integer
+est: array [8][8] of string
+mod: array [4][2] of string
+lk: array [8][8] of integer
+id: array [8] of integer
+tabla_rep: array [56][3] of integer
+info_login: array [2] of string
+
+Declarativa de variables:
+edades = ed
+estudiantes = est
+moderadores = mod
+likes = lk
+tabla_reportes = tabla_rep
+informacion_login = info_login
+tabla_ids= id
+"""
 
 estudiantes = [
     [
@@ -206,32 +225,6 @@ def inicializacion(tabla_likes, est):
                 tabla_likes[i][j] = "no"
 
 
-def imprimir_tabla(array, fila=None):
-    if not array:
-        print("El array está vacío.")
-        return
-
-    max_columns = max(len(row) for row in array)
-    col_widths = [0] * max_columns
-    for row in array:
-        for i, item in enumerate(row):
-            col_widths[i] = max(col_widths[i], len(str(item)))
-
-    def imprimir_fila(fila_array):
-        for i, dato in enumerate(fila_array):
-            print(f"{str(dato):<{col_widths[i]}}", end=" | ")
-        print()
-
-    if fila is not None:
-        if 0 <= fila < len(array):
-            imprimir_fila(array[fila])
-        else:
-            print(f"Fila {fila} no es válida. Debe estar entre 0 y {len(array) - 1}.")
-    else:
-        for fila_array in array:
-            imprimir_fila(fila_array)
-
-
 def calcular_edad(fecha_nacimiento):
     fecha_nac = datetime.strptime(fecha_nacimiento, "%Y/%m/%d")
     edad = int((datetime.today() - fecha_nac).days / 365.2425)
@@ -418,19 +411,31 @@ def hacer_preguntas(nuevo=False, est=None):
                     datos[i] = input("Ingrese " + campos[i] + ": ")
                     while buscar_estudiante_por_mail(datos[i], est) != -1:
                         datos[i] = input("Ingrese " + campos[i] + ": ")
+                elif i == 4:
+                    datos[i] = "activo"
+                elif i == 13:
+                    datos[i] = pedir_fecha()
                 else:
                     datos[i] = input("Ingrese " + campos[i] + ": ")
             else:
-                respuesta = ""
-                while respuesta != "s" and respuesta != "n":
-                    respuesta = input(
-                        "¿Desea modificar " + campos[i] + "? (s/n): "
-                    ).lower()
-                if respuesta == "s":
-                    datos[i] = input("Ingrese modificación: ")
-
-            if i == 13 and datos[i] != "":
-                datos[i] = pedir_fecha()
+                if i != 4 and i != 13:
+                    respuesta = ""
+                    while respuesta != "s" and respuesta != "n":
+                        respuesta = input(
+                            "¿Desea modificar " + campos[i] + "? (s/n): "
+                        ).lower()
+                    if respuesta == "s":
+                        datos[i] = input("Ingrese modificación: ")
+                elif i == 13:
+                    respuesta = ""
+                    while respuesta != "s" and respuesta != "n":
+                        respuesta = input(
+                            "¿Desea modificar " + campos[i] + "? (s/n): "
+                        ).lower()
+                    if respuesta == "s":
+                        datos[i] = pedir_fecha()
+                else:
+                    datos[i] = "activo"
 
     return datos
 
@@ -710,7 +715,7 @@ def inicio_sesion(est, mod, t_ids, inf_login):
                     intentos = 0
         elif opcion == "2":
             registro(est, inf_login, t_ids)
-            imprimir_tabla(est)
+
             print("registro exitoso")
         elif opcion == "3":
             print("Saliendo del programa...")
@@ -788,7 +793,6 @@ def desactivar_usuario(est, mod, inf_login, tabla_likes, t_ids):
             )
 
         eliminar_estudiante_por_id(int(id_est), est, t_ids)
-        imprimir_tabla(est)
 
     if name == "*" and id_est == -1:
         print("Necesitamos más datos para eliminar al usuario")
@@ -851,7 +855,38 @@ def ver_reportes(reportes, est):
             print("Reporte actualizado.")
 
 
-main(estudiantes, moderadores, informacion_login, likes, tabla_ids)
+edades = [0] * 8
 
 
-imprimir_tabla(estudiantes, 0)
+def edad_faltante(est, ed):
+    for k in range(8):
+        ed[k] = calcular_edad(est[k][13])
+    for i in range(0, 7):
+        for j in range(i + 1, 8):
+            if ed[j] < ed[i]:
+                aux = ed[i]
+                ed[i] = ed[j]
+                ed[j] = aux
+    print(ed)
+
+    for i in range(0, 7):
+
+        if ed[i] + 1 != ed[i + 1] and ed[i] != ed[i + 1]:
+            for i in range(ed[i + 1] - ed[i]):
+                print("falta este numero en la secuencia:", ed[i] + 1)
+
+
+edad_faltante(estudiantes, edades)
+
+
+def matcheos_comb(est):
+    cont = 0
+    for i in range(8):
+        if est[i][4] == "activo":
+            cont = cont + 1
+    print(cont * (cont - 1))
+
+
+matcheos_comb(estudiantes)
+
+""" main(estudiantes, moderadores, informacion_login, likes, tabla_ids) """
