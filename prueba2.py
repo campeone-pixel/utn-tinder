@@ -2,6 +2,7 @@ from datetime import datetime
 import getpass
 import random
 import os
+import math
 
 # Definición de variables globales
 estudiantes = [
@@ -58,7 +59,7 @@ estudiantes = [
         "miguel",
         "masculino",
         "4",
-        "no_activo",
+        "activo",
         "leer libros de ciencia ficción y jugar al tenis",
         "literatura",
         "tenis",
@@ -74,7 +75,7 @@ estudiantes = [
         "lucía",
         "femenino",
         "999000",
-        "activo",
+        "no_activo",
         "tocar la guitarra y aprender idiomas",
         "música",
         "guitarra",
@@ -90,7 +91,7 @@ estudiantes = [
         "javier",
         "masculino",
         "111222",
-        "activo",
+        "no_activo",
         "programar y jugar videojuegos",
         "informática",
         "videojuegos",
@@ -106,7 +107,7 @@ estudiantes = [
         "sofía",
         "femenino",
         "333555",
-        "activo",
+        "no_activo",
         "dibujar y practicar yoga",
         "arte",
         "yoga",
@@ -120,38 +121,6 @@ estudiantes = [
     [
         "estudiante8@ayed.com",
         "diego",
-        "masculino",
-        "444777",
-        "no_activo",
-        "viajar y estudiar economía",
-        "viajar",
-        "economía",
-        "geografía",
-        "ciencias políticas",
-        "Lorem ipsum dolor sit amet.",
-        "Perú",
-        "Lima",
-        "1997/12/25",
-    ],
-    [
-        "estudiante8@ayed.com",
-        "diego2",
-        "masculino",
-        "444777",
-        "no_activo",
-        "viajar y estudiar economía",
-        "viajar",
-        "economía",
-        "geografía",
-        "ciencias políticas",
-        "Lorem ipsum dolor sit amet.",
-        "Perú",
-        "Lima",
-        "1997/12/25",
-    ],
-    [
-        "estudiante8@ayed.com",
-        "diego3",
         "masculino",
         "444777",
         "no_activo",
@@ -577,9 +546,9 @@ def imprimir_menu_inicio_sesion():
 def imprimir_menu_estudiante():
     print("1. Gestionar mi perfil")
     print("2. Gestionar candidatos")
-    print("3. Matcheos")
+    print("3. BONUSTRACK - Edad Faltante")
     print("4. Reportes estadísticos")
-    print("5. Ruleta")
+    print("5. BONUSTRACK - Combinaciones")
     print("6. Salir")
     opcion = input("Por favor, seleccione una opción: ")
     while not (
@@ -677,11 +646,11 @@ def estudiante():
         elif opcion == "2":
             gestionar_candidatos()
         elif opcion == "3":
-            print("En construcción\n")
+            edad_faltante()
         elif opcion == "4":
             reporte_estadistico()
         elif opcion == "5":
-            print("En construcción\n")
+            matcheos_comb()
         elif opcion == "6":
             informacion_login[0] = ""
         else:
@@ -870,27 +839,18 @@ def ver_reportes():
             print("Reporte actualizado.")
 
 
-edades = [0] * 8
-
-
 def edad_faltante():
-    for k in range(8):
-        edades[k] = calcular_edad(estudiantes[k][13])
+    edades = [21, 18, 20, 19, 23, 24]
     for i in range(0, 7):
         for j in range(i + 1, 8):
             if edades[j] < edades[i]:
                 aux = edades[i]
                 edades[i] = edades[j]
                 edades[j] = aux
-    print(edades)
-
     for i in range(0, 7):
-        if edades[i] + 1 != edades[i + 1] and edades[i] != edades[i + 1]:
+        if edades[i] + 1 != edades[i + 1]:
             for i in range(edades[i + 1] - edades[i]):
                 print("falta este número en la secuencia:", edades[i] + 1)
-
-
-edad_faltante()
 
 
 def matcheos_comb():
@@ -898,10 +858,8 @@ def matcheos_comb():
     for i in range(8):
         if estudiantes[i][4] == "activo":
             cont = cont + 1
-    print(cont * (cont - 1))
 
-
-matcheos_comb()
+    print("las combinaciones posibles son", math.comb(cont, 2))
 
 
 main()
