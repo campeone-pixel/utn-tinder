@@ -5,6 +5,25 @@ import os
 import math
 
 # Definición de variables globales
+"""
+Tipos de arreglos:
+
+est: array [8][8] of string
+mod: array [4][2] of string
+lk: array [8][8] of integer
+id: array [8] of integer
+tabla_rep: array [56][3] of integer
+info_login: array [2] of string
+
+Declarativa de variables:
+
+estudiantes = est
+moderadores = mod
+likes = lk
+tabla_reportes = tabla_rep
+informacion_login = info_login
+tabla_ids= id
+"""
 estudiantes = [
     [
         "1",
@@ -159,31 +178,6 @@ tabla_ids = [0, 1, 2, 3, 4, 5, 6, 7]
 tabla_reportes = [[""] * 3 for n in range(56)]
 
 informacion_login = ["", ""]
-
-
-def imprimir_tabla(array, fila=None):
-    if not array:
-        print("El array está vacío.")
-        return
-    max_columns = max(len(row) for row in array)
-    col_widths = [0] * max_columns
-    for row in array:
-        for i, item in enumerate(row):
-            col_widths[i] = max(col_widths[i], len(str(item)))
-
-    def imprimir_fila(fila_array):
-        for i, dato in enumerate(fila_array):
-            print(f"{str(dato):<{col_widths[i]}}", end=" | ")
-        print()
-
-    if fila is not None:
-        if 0 <= fila < len(array):
-            imprimir_fila(array[fila])
-        else:
-            print(f"Fila {fila} no es válida. Debe estar entre 0 y {len(array) - 1}.")
-    else:
-        for fila_array in array:
-            imprimir_fila(fila_array)
 
 
 def inicializacion():
@@ -605,7 +599,6 @@ def gestionar_perfil():
 
 
 def gestionar_candidatos():
-    imprimir_tabla(likes)
     opcion = ""
     while opcion != "0":
         opcion = imprimir_menu_gestionar_candidatos()
@@ -814,6 +807,14 @@ def gestionar_reportes():
         opcion = input("Seleccione otra opción: ")
 
 
+"""
+var:
+    opcion:string
+    email_reportado: string
+    poscion_reportado: int
+"""
+
+
 def ver_reportes():
     for i in range(56):
         if tabla_reportes[i][2] == "0":
@@ -839,18 +840,34 @@ def ver_reportes():
             print("Reporte actualizado.")
 
 
+"""
+type:
+    edades: array [ 0 a 5] of int
+var:
+    edades:edades
+    aux: int
+    
+"""
+
+
 def edad_faltante():
     edades = [21, 18, 20, 19, 23, 24]
-    for i in range(0, 7):
-        for j in range(i + 1, 8):
+    for i in range(0, 4):
+        for j in range(i + 1, 5):
             if edades[j] < edades[i]:
                 aux = edades[i]
                 edades[i] = edades[j]
                 edades[j] = aux
-    for i in range(0, 7):
+    print(edades)
+    for i in range(0, 5):
         if edades[i] + 1 != edades[i + 1]:
-            for i in range(edades[i + 1] - edades[i]):
-                print("falta este número en la secuencia:", edades[i] + 1)
+            print("el numero que falta es:", edades[i] + 1)
+
+
+"""
+var:
+    cont:int
+"""
 
 
 def matcheos_comb():
@@ -858,7 +875,6 @@ def matcheos_comb():
     for i in range(8):
         if estudiantes[i][4] == "activo":
             cont = cont + 1
-
     print("las combinaciones posibles son", math.comb(cont, 2))
 
 
