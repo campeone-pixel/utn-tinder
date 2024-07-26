@@ -26,10 +26,10 @@ tabla_ids= id
 """
 estudiantes = [
     [
-        "1",
+        "0",
         "leonardo",
         "masculino",
-        "1",
+        "0",
         "activo",
         "estudio humanidades y me gusta el pensamiento lateral",
         "historia",
@@ -42,10 +42,10 @@ estudiantes = [
         "2000/08/16",
     ],
     [
-        "2",
+        "1",
         "julian",
         "masculino",
-        "2",
+        "1",
         "activo",
         "estudiar matemáticas y hacer muchos cálculos de integrales",
         "matemáticas",
@@ -58,10 +58,10 @@ estudiantes = [
         "1987/07/11",
     ],
     [
-        "3",
+        "2",
         "carolina",
         "femenino",
-        "3",
+        "2",
         "activo",
         "surf, andar en bici, estudiar física",
         "física",
@@ -74,10 +74,10 @@ estudiantes = [
         "2002/08/16",
     ],
     [
-        "4",
+        "3",
         "miguel",
         "masculino",
-        "4",
+        "3",
         "activo",
         "leer libros de ciencia ficción y jugar al tenis",
         "literatura",
@@ -210,8 +210,7 @@ def obtener_anio():
         anio = input("Ingrese el año (aaaa): ")
         if anio.isdigit() and 1800 <= int(anio) <= datetime.now().year:
             return int(anio)
-        else:
-            print("Año inválido. Debe ser un número entre 1800 y el año actual.")
+        print("Año inválido. Debe ser un número entre 1800 y el año actual.")
 
 
 def obtener_mes():
@@ -219,8 +218,7 @@ def obtener_mes():
         mes = input("Ingrese el mes (mm): ")
         if mes.isdigit() and 1 <= int(mes) <= 12:
             return int(mes)
-        else:
-            print("Mes inválido. Debe ser un número entre 01 y 12.")
+        print("Mes inválido. Debe ser un número entre 01 y 12.")
 
 
 def obtener_dia(anio, mes):
@@ -264,18 +262,18 @@ def incrementar_id():
 
 def buscar_estudiante_por_mail(email):
     posicion = 0
-    while email != estudiantes[posicion][0] and posicion < 8:
+    while posicion < 8 and email != estudiantes[posicion][0]:
         posicion = posicion + 1
-    if email != estudiantes[posicion][0]:
+    if posicion == 8 or email != estudiantes[posicion][0]:
         posicion = -1
     return posicion
 
 
 def buscar_estudiante_por_nombre(nombre):
     posicion = 0
-    while nombre != estudiantes[posicion][1] and posicion < 8:
+    while posicion < 8 and nombre != estudiantes[posicion][1]:
         posicion = posicion + 1
-    if nombre != estudiantes[posicion][1]:
+    if posicion == 8 or nombre != estudiantes[posicion][1]:
         posicion = -1
     return posicion
 
@@ -290,14 +288,13 @@ def eliminar_estudiante_por_indice(id_est):
 
 
 def buscar_id(posicion):
-    if posicion >= 0 and posicion < 8:
+    if 8 > posicion >= 0:
         return tabla_ids[posicion]
-    else:
-        return None
+    return -1
 
 
 def modificar_id(posicion):
-    if posicion >= 0 and posicion < 8:
+    if 8 > posicion >= 0:
         nuevo_id = incrementar_id()
         tabla_ids[posicion] = nuevo_id
 
@@ -308,8 +305,7 @@ def indice_de_estudiante_por_id(id_est):
         posicion += 1
     if posicion < 8:
         return posicion
-    else:
-        return -1
+    return -1
 
 
 def eliminar_estudiante_por_id(id_est):
@@ -355,6 +351,43 @@ def estudiante_activo_por_mail(email):
     return valor
 
 
+def obtener_dato_nuevo(indice, campos, datos):
+    if indice == 0:
+        datos[indice] = input("Ingrese " + campos[indice] + ": ")
+        while buscar_estudiante_por_mail(datos[indice]) != -1:
+            print("Email ya registrado, ingrese otro")
+            datos[indice] = input("Ingrese " + campos[indice] + ": ")
+    elif indice == 4:
+        datos[indice] = "activo"
+    elif indice == 13:
+        datos[indice] = pedir_fecha()
+    else:
+        datos[indice] = input("Ingrese " + campos[indice] + ": ")
+    return datos
+
+
+def obtener_dato_modificado(indice, campos, datos):
+    if indice != 4 and indice != 13:
+        respuesta = ""
+        while respuesta != "s" and respuesta != "n":
+            respuesta = input(
+                "¿Desea modificar " + campos[indice] + "? (s/n): "
+            ).lower()
+        if respuesta == "s":
+            datos[indice] = input("Ingrese modificación: ")
+    elif indice == 13:
+        respuesta = ""
+        while respuesta != "s" and respuesta != "n":
+            respuesta = input(
+                "¿Desea modificar " + campos[indice] + "? (s/n): "
+            ).lower()
+        if respuesta == "s":
+            datos[indice] = pedir_fecha()
+    elif indice == 4:
+        datos[indice] = "activo"
+    return datos
+
+
 def hacer_preguntas(nuevo=False):
     datos = [""] * 14
     campos = [
@@ -375,39 +408,10 @@ def hacer_preguntas(nuevo=False):
     ]
 
     for i in range(14):
-        if i == 0 and not nuevo:
-            datos[i] = ""
+        if nuevo:
+            datos = obtener_dato_nuevo(i, campos, datos)
         else:
-            if nuevo:
-                if i == 0:
-                    datos[i] = input("Ingrese " + campos[i] + ": ")
-                    while buscar_estudiante_por_mail(datos[i]) != -1:
-                        datos[i] = input("Ingrese " + campos[i] + ": ")
-                elif i == 4:
-                    datos[i] = "activo"
-                elif i == 13:
-                    datos[i] = pedir_fecha()
-                else:
-                    datos[i] = input("Ingrese " + campos[i] + ": ")
-            else:
-                if i != 4 and i != 13:
-                    respuesta = ""
-                    while respuesta != "s" and respuesta != "n":
-                        respuesta = input(
-                            "¿Desea modificar " + campos[i] + "? (s/n): "
-                        ).lower()
-                    if respuesta == "s":
-                        datos[i] = input("Ingrese modificación: ")
-                elif i == 13:
-                    respuesta = ""
-                    while respuesta != "s" and respuesta != "n":
-                        respuesta = input(
-                            "¿Desea modificar " + campos[i] + "? (s/n): "
-                        ).lower()
-                    if respuesta == "s":
-                        datos[i] = pedir_fecha()
-                else:
-                    datos[i] = "activo"
+            datos = obtener_dato_modificado(i, campos, datos)
 
     return datos
 
@@ -770,11 +774,11 @@ def desactivar_usuario():
 
     if name == "*":
         id_est = input(
-            "Seleccione el ID del usuario que quiere desactivar, si no lo conoce coloque '8': "
+            "Seleccione el ID del usuario, si no lo conoce coloque un numero mayor a 7 o menor a 0: "
         )
         while not id_est.isdigit():
             id_est = input(
-                "Seleccione el ID del usuario que quiere desactivar, si no lo conoce coloque un numero mayor a 7 o menor a 0: "
+                "Seleccione el ID del usuario, si no lo conoce coloque un numero mayor a 7 o menor a 0: "
             )
         if 0 <= int(id_est) < 8:
             eliminar_estudiante_por_id(int(id_est))
