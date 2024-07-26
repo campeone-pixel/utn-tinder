@@ -181,7 +181,10 @@ informacion_login = ["", ""]
 
 # ----------------------------arriba------------------------------------------------
 
-
+"""
+var:
+    me_gusta: int
+"""
 def inicializacion():
     for i in range(8):
         for j in range(8):
@@ -194,7 +197,10 @@ def inicializacion():
             else:
                 likes[i][j] = 0
 
-
+"""
+var:
+    edad: int
+"""
 def calcular_edad(fecha_nacimiento):
     fecha_nac = datetime.strptime(fecha_nacimiento, "%Y/%m/%d")
     edad = int((datetime.today() - fecha_nac).days / 365.2425)
@@ -204,7 +210,10 @@ def calcular_edad(fecha_nacimiento):
 def es_bisiesto(anio):
     return (anio % 4 == 0 and anio % 100 != 0) or (anio % 400 == 0)
 
-
+"""
+var:
+    anio: int
+"""
 def obtener_anio():
     while True:
         anio = input("Ingrese el año (aaaa): ")
@@ -212,7 +221,10 @@ def obtener_anio():
             return int(anio)
         print("Año inválido. Debe ser un número entre 1800 y el año actual.")
 
-
+"""
+var:
+    mes: int
+"""
 def obtener_mes():
     while True:
         mes = input("Ingrese el mes (mm): ")
@@ -220,7 +232,10 @@ def obtener_mes():
             return int(mes)
         print("Mes inválido. Debe ser un número entre 01 y 12.")
 
-
+"""
+var:
+    dia,max_dia: int
+"""
 def obtener_dia(anio, mes):
     while True:
         dia = input("Ingrese el día (dd): ")
@@ -242,7 +257,10 @@ def obtener_dia(anio, mes):
         else:
             print("Día inválido. Debe ser un número.")
 
-
+"""
+var:
+    anio,mes,dia: int
+"""
 def pedir_fecha():
     anio = obtener_anio()
     mes = obtener_mes()
@@ -251,7 +269,10 @@ def pedir_fecha():
     dia_str = str(dia) if dia > 9 else "0" + str(dia)
     return str(anio) + "/" + mes_str + "/" + dia_str
 
-
+"""
+var:
+    max_id: int
+"""
 def incrementar_id():
     max_id = 0
     for i in tabla_ids:
@@ -259,7 +280,10 @@ def incrementar_id():
             max_id = i
     return max_id + 1
 
-
+"""
+var:
+    posicion: int
+"""
 def buscar_estudiante_por_mail(email):
     posicion = 0
     while posicion < 8 and email != estudiantes[posicion][0]:
@@ -268,7 +292,10 @@ def buscar_estudiante_por_mail(email):
         posicion = -1
     return posicion
 
-
+"""
+var:
+    posicion: int
+"""
 def buscar_estudiante_por_nombre(nombre):
     posicion = 0
     while posicion < 8 and nombre != estudiantes[posicion][1]:
@@ -277,7 +304,10 @@ def buscar_estudiante_por_nombre(nombre):
         posicion = -1
     return posicion
 
-
+"""
+var:
+    posicion: int
+"""
 def eliminar_estudiante_por_email(email):
     posicion = buscar_estudiante_por_mail(email)
     estudiantes[posicion][4] = "no_activo"
@@ -292,13 +322,19 @@ def buscar_id(posicion):
         return tabla_ids[posicion]
     return -1
 
-
+"""
+var:
+    nuevo_id: int
+"""
 def modificar_id(posicion):
     if 8 > posicion >= 0:
         nuevo_id = incrementar_id()
         tabla_ids[posicion] = nuevo_id
 
-
+"""
+var:
+    posicion: int
+"""
 def indice_de_estudiante_por_id(id_est):
     posicion = 0
     while posicion < 8 and tabla_ids[posicion] != id_est:
@@ -307,7 +343,10 @@ def indice_de_estudiante_por_id(id_est):
         return posicion
     return -1
 
-
+"""
+var:
+    posicion: int
+"""
 def eliminar_estudiante_por_id(id_est):
     posicion = indice_de_estudiante_por_id(id_est)
     if posicion != -1:
@@ -315,7 +354,10 @@ def eliminar_estudiante_por_id(id_est):
     else:
         print("No existe el estudiante con ese ID")
 
-
+"""
+var:
+    posicion,i: int
+"""
 def agregar_estudiante():
     posicion = -1
     i = 0
@@ -332,7 +374,11 @@ def agregar_estudiante():
     else:
         print("No hay lugar, siga participando")
 
-
+"""
+var:
+    posicion: int
+    nuevos datos: string
+"""
 def modificar_estudiante_por_mail(email):
     posicion = buscar_estudiante_por_mail(email)
 
@@ -342,7 +388,11 @@ def modificar_estudiante_por_mail(email):
         if nuevos_datos[i]:
             estudiantes[posicion][i] = nuevos_datos[i]
 
-
+"""
+var:
+    valor: bool
+    posicion: int
+"""
 def estudiante_activo_por_mail(email):
     valor = False
     posicion = buscar_estudiante_por_mail(email)
@@ -350,7 +400,10 @@ def estudiante_activo_por_mail(email):
         valor = True
     return valor
 
-
+"""
+var:
+    indice: int
+"""
 def obtener_dato_nuevo(indice, campos, datos):
     if indice == 0:
         datos[indice] = input("Ingrese " + campos[indice] + ": ")
@@ -365,7 +418,11 @@ def obtener_dato_nuevo(indice, campos, datos):
         datos[indice] = input("Ingrese " + campos[indice] + ": ")
     return datos
 
-
+"""
+var:
+    indice: int
+    respuesta:string
+"""
 def obtener_dato_modificado(indice, campos, datos):
     if indice != 4 and indice != 13:
         respuesta = ""
@@ -387,7 +444,13 @@ def obtener_dato_modificado(indice, campos, datos):
         datos[indice] = "activo"
     return datos
 
-
+"""
+type:
+    informacion: array [14] of string
+var:
+    datos, campos: informacion
+    nuevo: bool
+"""
 def hacer_preguntas(nuevo=False):
     datos = [""] * 14
     campos = [
@@ -415,7 +478,10 @@ def hacer_preguntas(nuevo=False):
 
     return datos
 
-
+"""
+var:
+    existe: bool
+"""
 def existe_usuario(email, password):
     existe = False
     for i in range(8):
@@ -426,7 +492,10 @@ def existe_usuario(email, password):
             existe = True
     return existe
 
-
+"""
+var:
+    role:string
+"""
 def que_role(email, password):
     role = ""
     for i in range(8):
@@ -437,14 +506,21 @@ def que_role(email, password):
             role = "moderador"
     return role
 
-
+"""
+var:
+   valor: bool 
+"""
 def conectado():
     valor = False
     if informacion_login[0] != "":
         valor = True
     return valor
 
-
+"""
+var:   
+    NOMBRE,SEXO,HOBBIES,MATERIA_FAVORITA,DEPORTE_FAVORITO: int
+    MATERIA_FUERTE,MATERIA_DEBIL,BIOGRAFIA,PAIS,CIUDAD,FECHA_NACIMIENTO: int
+"""
 def imprimir_datos_estudiante(un_estudiante):
     NOMBRE = 1
     SEXO = 2
