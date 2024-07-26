@@ -179,6 +179,8 @@ tabla_reportes = [[""] * 3 for n in range(56)]
 
 informacion_login = ["", ""]
 
+# ----------------------------arriba------------------------------------------------
+
 
 def inicializacion():
     for i in range(8):
@@ -468,6 +470,9 @@ def imprimir_datos_estudiante(un_estudiante):
         print("Fecha de nacimiento inválida:", un_estudiante[FECHA_NACIMIENTO])
 
 
+# -------------------------------medio---------------------------------------------
+
+
 def ver_candidatos():
     for x in range(8):
         if estudiantes[x][0] != informacion_login[0] and estudiante_activo_por_mail(
@@ -608,6 +613,9 @@ def gestionar_candidatos():
             reportar_candidato()
         elif opcion != "0":
             print("Opción no válida. Por favor, seleccione una opción válida.\n")
+
+
+# ----------------------------abajo------------------------------------------------
 
 
 def reporte_estadistico():
@@ -806,6 +814,8 @@ def gestionar_reportes():
         print("2. Volver")
         opcion = input("Seleccione otra opción: ")
 
+
+# ----------------------------------------------------------------------------
 
 """
 var:
