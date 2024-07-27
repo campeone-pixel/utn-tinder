@@ -4,6 +4,14 @@ import random
 import os
 import math
 
+"""
+Integrantes:
+- Matias Abel Poses
+- Santiago Porcel
+- OROÑO, Martin
+Comision 11
+"""
+
 # Definición de variables globales
 """
 Tipos de arreglos:
