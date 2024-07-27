@@ -179,12 +179,13 @@ tabla_reportes = [[""] * 3 for n in range(56)]
 
 informacion_login = ["", ""]
 
-# ----------------------------arriba------------------------------------------------
 
 """
 var:
     me_gusta: int
 """
+
+
 def inicializacion():
     for i in range(8):
         for j in range(8):
@@ -197,10 +198,13 @@ def inicializacion():
             else:
                 likes[i][j] = 0
 
+
 """
 var:
     edad: int
 """
+
+
 def calcular_edad(fecha_nacimiento):
     fecha_nac = datetime.strptime(fecha_nacimiento, "%Y/%m/%d")
     edad = int((datetime.today() - fecha_nac).days / 365.2425)
@@ -210,10 +214,13 @@ def calcular_edad(fecha_nacimiento):
 def es_bisiesto(anio):
     return (anio % 4 == 0 and anio % 100 != 0) or (anio % 400 == 0)
 
+
 """
 var:
     anio: int
 """
+
+
 def obtener_anio():
     while True:
         anio = input("Ingrese el año (aaaa): ")
@@ -221,10 +228,13 @@ def obtener_anio():
             return int(anio)
         print("Año inválido. Debe ser un número entre 1800 y el año actual.")
 
+
 """
 var:
     mes: int
 """
+
+
 def obtener_mes():
     while True:
         mes = input("Ingrese el mes (mm): ")
@@ -232,10 +242,13 @@ def obtener_mes():
             return int(mes)
         print("Mes inválido. Debe ser un número entre 01 y 12.")
 
+
 """
 var:
     dia,max_dia: int
 """
+
+
 def obtener_dia(anio, mes):
     while True:
         dia = input("Ingrese el día (dd): ")
@@ -257,10 +270,13 @@ def obtener_dia(anio, mes):
         else:
             print("Día inválido. Debe ser un número.")
 
+
 """
 var:
     anio,mes,dia: int
 """
+
+
 def pedir_fecha():
     anio = obtener_anio()
     mes = obtener_mes()
@@ -269,10 +285,13 @@ def pedir_fecha():
     dia_str = str(dia) if dia > 9 else "0" + str(dia)
     return str(anio) + "/" + mes_str + "/" + dia_str
 
+
 """
 var:
     max_id: int
 """
+
+
 def incrementar_id():
     max_id = 0
     for i in tabla_ids:
@@ -280,10 +299,13 @@ def incrementar_id():
             max_id = i
     return max_id + 1
 
+
 """
 var:
     posicion: int
 """
+
+
 def buscar_estudiante_por_mail(email):
     posicion = 0
     while posicion < 8 and email != estudiantes[posicion][0]:
@@ -292,10 +314,13 @@ def buscar_estudiante_por_mail(email):
         posicion = -1
     return posicion
 
+
 """
 var:
     posicion: int
 """
+
+
 def buscar_estudiante_por_nombre(nombre):
     posicion = 0
     while posicion < 8 and nombre != estudiantes[posicion][1]:
@@ -304,10 +329,13 @@ def buscar_estudiante_por_nombre(nombre):
         posicion = -1
     return posicion
 
+
 """
 var:
     posicion: int
 """
+
+
 def eliminar_estudiante_por_email(email):
     posicion = buscar_estudiante_por_mail(email)
     estudiantes[posicion][4] = "no_activo"
@@ -322,19 +350,25 @@ def buscar_id(posicion):
         return tabla_ids[posicion]
     return -1
 
+
 """
 var:
     nuevo_id: int
 """
+
+
 def modificar_id(posicion):
     if 8 > posicion >= 0:
         nuevo_id = incrementar_id()
         tabla_ids[posicion] = nuevo_id
 
+
 """
 var:
     posicion: int
 """
+
+
 def indice_de_estudiante_por_id(id_est):
     posicion = 0
     while posicion < 8 and tabla_ids[posicion] != id_est:
@@ -343,10 +377,13 @@ def indice_de_estudiante_por_id(id_est):
         return posicion
     return -1
 
+
 """
 var:
     posicion: int
 """
+
+
 def eliminar_estudiante_por_id(id_est):
     posicion = indice_de_estudiante_por_id(id_est)
     if posicion != -1:
@@ -354,10 +391,13 @@ def eliminar_estudiante_por_id(id_est):
     else:
         print("No existe el estudiante con ese ID")
 
+
 """
 var:
     posicion,i: int
 """
+
+
 def agregar_estudiante():
     posicion = -1
     i = 0
@@ -374,11 +414,14 @@ def agregar_estudiante():
     else:
         print("No hay lugar, siga participando")
 
+
 """
 var:
     posicion: int
     nuevos datos: string
 """
+
+
 def modificar_estudiante_por_mail(email):
     posicion = buscar_estudiante_por_mail(email)
 
@@ -388,11 +431,14 @@ def modificar_estudiante_por_mail(email):
         if nuevos_datos[i]:
             estudiantes[posicion][i] = nuevos_datos[i]
 
+
 """
 var:
     valor: bool
     posicion: int
 """
+
+
 def estudiante_activo_por_mail(email):
     valor = False
     posicion = buscar_estudiante_por_mail(email)
@@ -400,10 +446,13 @@ def estudiante_activo_por_mail(email):
         valor = True
     return valor
 
+
 """
 var:
     indice: int
 """
+
+
 def obtener_dato_nuevo(indice, campos, datos):
     if indice == 0:
         datos[indice] = input("Ingrese " + campos[indice] + ": ")
@@ -418,11 +467,14 @@ def obtener_dato_nuevo(indice, campos, datos):
         datos[indice] = input("Ingrese " + campos[indice] + ": ")
     return datos
 
+
 """
 var:
     indice: int
     respuesta:string
 """
+
+
 def obtener_dato_modificado(indice, campos, datos):
     if indice != 4 and indice != 13:
         respuesta = ""
@@ -444,6 +496,7 @@ def obtener_dato_modificado(indice, campos, datos):
         datos[indice] = "activo"
     return datos
 
+
 """
 type:
     informacion: array [14] of string
@@ -451,6 +504,8 @@ var:
     datos, campos: informacion
     nuevo: bool
 """
+
+
 def hacer_preguntas(nuevo=False):
     datos = [""] * 14
     campos = [
@@ -478,10 +533,13 @@ def hacer_preguntas(nuevo=False):
 
     return datos
 
+
 """
 var:
     existe: bool
 """
+
+
 def existe_usuario(email, password):
     existe = False
     for i in range(8):
@@ -492,10 +550,13 @@ def existe_usuario(email, password):
             existe = True
     return existe
 
+
 """
 var:
     role:string
 """
+
+
 def que_role(email, password):
     role = ""
     for i in range(8):
@@ -506,21 +567,27 @@ def que_role(email, password):
             role = "moderador"
     return role
 
+
 """
 var:
    valor: bool 
 """
+
+
 def conectado():
     valor = False
     if informacion_login[0] != "":
         valor = True
     return valor
 
+
 """
 var:   
     NOMBRE,SEXO,HOBBIES,MATERIA_FAVORITA,DEPORTE_FAVORITO: int
     MATERIA_FUERTE,MATERIA_DEBIL,BIOGRAFIA,PAIS,CIUDAD,FECHA_NACIMIENTO: int
 """
+
+
 def imprimir_datos_estudiante(un_estudiante):
     NOMBRE = 1
     SEXO = 2
@@ -550,7 +617,10 @@ def imprimir_datos_estudiante(un_estudiante):
         print("Fecha de nacimiento inválida:", un_estudiante[FECHA_NACIMIENTO])
 
 
-# -------------------------------medio---------------------------------------------
+"""
+var:
+   x: int
+"""
 
 
 def ver_candidatos():
@@ -563,6 +633,13 @@ def ver_candidatos():
     print("no hay más estudiantes para matchear")
 
 
+"""
+var:
+   respuesta: string
+   posicio_estud_conec: int
+"""
+
+
 def func_me_gusta(match):
     respuesta = ""
     while respuesta != "s" and respuesta != "n":
@@ -570,6 +647,14 @@ def func_me_gusta(match):
         if respuesta == "s":
             posicio_estud_conec = buscar_estudiante_por_mail(informacion_login[0])
             likes[posicio_estud_conec][match] = 1
+
+
+"""
+var:
+   continuar,espacio_encontrado: bollean
+   email_reportado,mensaje: string
+   posicion_reportado, i: int
+"""
 
 
 def reportar_candidato():
@@ -609,6 +694,12 @@ def reportar_candidato():
                     print("No hay espacio para más reportes.")
 
 
+"""
+var:
+   opcion: int
+"""
+
+
 def imprimir_menu_inicio_sesion():
     print("Seleccione una opción:")
     print("1. Iniciar sesión")
@@ -620,6 +711,12 @@ def imprimir_menu_inicio_sesion():
         opcion = input("Ingrese el número de su opción: ")
     os.system("cls")
     return opcion
+
+
+"""
+var:
+   opcion: int
+"""
 
 
 def imprimir_menu_estudiante():
@@ -644,6 +741,12 @@ def imprimir_menu_estudiante():
     return opcion
 
 
+"""
+var:
+   opcion: int
+"""
+
+
 def imprimir_menu_gestionar_perfil():
     print("1. Editar mis datos personales")
     print("2. Eliminar mi perfil")
@@ -656,6 +759,12 @@ def imprimir_menu_gestionar_perfil():
     return opcion
 
 
+"""
+var:
+   opcion: int
+"""
+
+
 def imprimir_menu_gestionar_candidatos():
     print("1. Ver Candidatos")
     print("2. Reportar un candidato")
@@ -666,6 +775,12 @@ def imprimir_menu_gestionar_candidatos():
         opcion = input("Por favor, seleccione una opción: ")
     os.system("cls")
     return opcion
+
+
+"""
+var:
+   opcion: string
+"""
 
 
 def gestionar_perfil():
@@ -683,6 +798,12 @@ def gestionar_perfil():
             print("Opción no válida. Por favor, seleccione una opción válida.")
 
 
+"""
+var:
+   opcion: string
+"""
+
+
 def gestionar_candidatos():
     opcion = ""
     while opcion != "0":
@@ -695,7 +816,32 @@ def gestionar_candidatos():
             print("Opción no válida. Por favor, seleccione una opción válida.\n")
 
 
-# ----------------------------abajo------------------------------------------------
+"""
+var:
+    activos:int
+"""
+
+
+def cuantos_activos():
+    activos = 0
+    for i in range(7):
+        if estudiantes[i][4] == "activo":
+            activos = activos + 1
+    return activos
+
+
+"""
+var:
+   match_correspondidos: int
+   likes_no_correspondido: int
+   likes_no_reciprocos: int
+   posicion: int
+"""
+
+"""
+var:
+    activos:int
+"""
 
 
 def reporte_estadistico():
@@ -703,17 +849,39 @@ def reporte_estadistico():
     likes_no_correspondido = 0
     likes_no_reciprocos = 0
     posicion = buscar_estudiante_por_mail(informacion_login[0])
+
     for i in range(8):
-        if likes[posicion][i] == 1 and likes[i][posicion] == 1:
+
+        if (
+            likes[posicion][i] == 1
+            and likes[i][posicion] == 1
+            and estudiante_activo_por_mail(estudiantes[i][0])
+        ):
             match_correspondidos += 1
-        elif likes[posicion][i] == 1 and likes[i][posicion] == 0:
+        elif (
+            likes[posicion][i] == 1
+            and likes[i][posicion] == 0
+            and estudiante_activo_por_mail(estudiantes[i][0])
+        ):
             likes_no_correspondido += 1
-        elif likes[posicion][i] == 0 and likes[i][posicion] == 1:
+        elif (
+            likes[posicion][i] == 0
+            and likes[i][posicion] == 1
+            and estudiante_activo_por_mail(estudiantes[i][0])
+        ):
             likes_no_reciprocos += 1
 
-    print("Match correspondidos:", match_correspondidos)
-    print("Likes no correspondidos:", likes_no_correspondido)
-    print("Likes no recíprocos:", likes_no_reciprocos)
+    print("Match correspondidos:", (match_correspondidos / cuantos_activos()) * 100)
+    print(
+        "Likes no correspondidos:", (likes_no_correspondido / cuantos_activos()) * 100
+    )
+    print("Likes no recíprocos:", (likes_no_reciprocos / cuantos_activos()) * 100)
+
+
+"""
+var:
+    opcion:string
+"""
 
 
 def estudiante():
@@ -738,6 +906,16 @@ def estudiante():
             print("Opción inválida\n")
         if not conectado():
             opcion = "6"
+
+
+"""
+var:
+    opcion:string
+    email: string
+    contrasenia: string
+    existe: booleano
+    intentos: int
+"""
 
 
 def inicio_sesion():
@@ -783,7 +961,6 @@ def inicio_sesion():
 
 def main():
     inicializacion()
-
     while informacion_login[0] == "":
         informacion_login[0], informacion_login[1] = "", ""
         inicio_sesion()
@@ -793,6 +970,13 @@ def main():
                 moderador()
             elif informacion_login[1] == "estudiante":
                 estudiante()
+
+
+"""
+var:
+    opcion:string
+
+"""
 
 
 def imprimir_menu_moderador():
@@ -805,6 +989,13 @@ def imprimir_menu_moderador():
         opcion = input("Por favor, seleccione una opción: ")
     os.system("cls")
     return opcion
+
+
+"""
+var:
+    opcion:string
+
+"""
 
 
 def moderador():
@@ -832,6 +1023,13 @@ def imprimir_tabla_ids_estudiantes():
             + estudiantes[i][1].ljust(15)
             + estudiantes[i][4].ljust(10)
         )
+
+
+"""
+var:
+    name:string
+
+"""
 
 
 def desactivar_usuario():
@@ -863,6 +1061,13 @@ def desactivar_usuario():
             print("Necesitamos más datos para eliminar al usuario")
 
 
+"""
+var:
+    opcion:string
+
+"""
+
+
 def menu_gest_user():
     print("1. Desactivar usuario.")
     print("2. Volver.")
@@ -876,6 +1081,13 @@ def menu_gest_user():
         else:
             opcion = input("Seleccione una opción: ")
     print("Saliendo\n")
+
+
+"""
+var:
+    opcion:string
+
+"""
 
 
 def gestionar_reportes():
@@ -894,8 +1106,6 @@ def gestionar_reportes():
         print("2. Volver")
         opcion = input("Seleccione otra opción: ")
 
-
-# ----------------------------------------------------------------------------
 
 """
 var:
