@@ -22,6 +22,25 @@ af_administradores = ".\\administradores.dat"
 
 informacion_login = ["", ""]
 
+def imprimir_alu(alumno):
+    print("Procesando clase 'alu':")
+    for atributo, valor in alumno.__dict__.items():
+        if not isinstance(valor, str):
+            print(f"Atributo: {atributo}, Tipo: {type(valor).__name__}, Valor: {valor}")
+
+def imprimir_mod(moderador):
+    print("Procesando clase 'mod':")
+    for atributo, valor in moderador.__dict__.items():
+        if not isinstance(valor, str):
+            print(f"Atributo: {atributo}, Tipo: {type(valor).__name__}, Valor: {valor}")
+
+def imprimir_admin(administrador):
+    print("Procesando clase 'admin':")
+    for atributo, valor in administrador.__dict__.items():
+        if not isinstance(valor, str):
+            print(f"Atributo: {atributo}, Tipo: {type(valor).__name__}, Valor: {valor}")
+
+
 def conectado():
     valor = False
     if informacion_login[0] != "":
@@ -47,15 +66,26 @@ class alu:
         self.ciudad = ""
         self.fecha_nacimiento = datetime.strptime("1900/12/12", "%Y/%m/%d")
 
-   
+class mod:
+    def __init__(self):
+        self.nro_id = 0
+        self.email = ""
+        self.contrasenia = ""
+        self.estado = True
+
+
+class admin:
+    def __init__(self):
+        self.nro_id = 0
+        self.email = ""
+        self.contrasenia = ""
+
 def formatear_alum(self):
-    
     self.nro_id = str(self.nro_id).ljust(4)  
     self.email = self.email.ljust(32)
     self.nombre = self.nombre.ljust(32)
     self.sexo = self.sexo.ljust(1)
     self.contrasenia = self.contrasenia.ljust(32)
-    self.estado = '1'.ljust(1) if self.estado else '0'.ljust(1)  
     self.hobbies = self.hobbies.ljust(255)
     self.materia_favorita = self.materia_favorita.ljust(16)
     self.deporte_favorito = self.deporte_favorito.ljust(16)
@@ -68,14 +98,26 @@ def formatear_alum(self):
     return self  # Retornar el objeto formateado
 
 
+def formatear_mod(self):
+    self.nro_id = str(self.nro_id).ljust(4) 
+    self.email = self.email.ljust(32)
+    self.contrasenia = self.contrasenia.ljust(32)
+    return self
+
+def formatear_admin(self):
+    self.nro_id = str(self.nro_id).ljust(4)  
+    self.email = self.email.ljust(32)
+    self.contrasenia = self.contrasenia.ljust(32)
+    return self
+
 def convertir_a_alu(registro_formateado):
     alumno = alu()
-    alumno.id = int(registro_formateado.id.strip())  
+    alumno.nro_id = int(registro_formateado.nro_id.strip())  
     alumno.email = registro_formateado.email.strip()  
     alumno.nombre = registro_formateado.nombre.strip()
     alumno.sexo = registro_formateado.sexo.strip()
     alumno.contrasenia = registro_formateado.contrasenia.strip()
-    alumno.estado = registro_formateado.estado.strip() == '1'  
+    alumno.estado = registro_formateado.estado
     alumno.hobbies = registro_formateado.hobbies.strip()
     alumno.materia_favorita = registro_formateado.materia_favorita.strip()
     alumno.deporte_favorito = registro_formateado.deporte_favorito.strip()
@@ -87,45 +129,20 @@ def convertir_a_alu(registro_formateado):
     alumno.fecha_nacimiento = datetime.strptime(registro_formateado.fecha_nacimiento.strip(), "%Y/%m/%d")
     return alumno
 
-class mod:
-    def __init__(self):
-        self.nro_id = 0
-        self.email = ""
-        self.contrasenia = ""
-        self.estado = True
-
-def formatear_mod(self):
-    self.id = str(self.id).ljust(4)  # Convertir id en cadena y aplicamos ljust()
-    self.email = self.email.ljust(32)
-    self.contrasenia = self.contrasenia.ljust(32)
-    self.estado = '1'.ljust(1) if self.estado else '0'.ljust(1)  # Estado como 1 o 0
-    return self
 
 def convertir_a_mod(registro_formateado):
     moder = mod()
-    moder.id = int(registro_formateado.id.strip())  # Convertir id a entero
-    moder.email = registro_formateado.email.strip()  # Eliminar espacios extra
+    moder.nro_id = int(registro_formateado.id.strip())  
+    moder.email = registro_formateado.email.strip()  
     moder.contrasenia = registro_formateado.contrasenia.strip()
-    moder.estado = registro_formateado.estado.strip() == '1'  # Convertir a booleano
+    moder.estado = registro_formateado.estado
     return moder
 
 
-class admin:
-    def __init__(self):
-        self.nro_id = 0
-        self.email = ""
-        self.contrasenia = ""
-
-def formatear_admin(self):
-    self.id = str(self.id).ljust(4)  # Convertir id en cadena y aplicamos ljust()
-    self.email = self.email.ljust(32)
-    self.contrasenia = self.contrasenia.ljust(32)
-    return self
-
 def convertir_a_admin(registro_formateado):
     administrador = admin()
-    administrador.id = int(registro_formateado.id.strip())  # Convertir id a entero
-    administrador.email = registro_formateado.email.strip()  # Eliminar espacios extra
+    administrador.nro_id = int(registro_formateado.id.strip())  
+    administrador.email = registro_formateado.email.strip()  
     administrador.contrasenia = registro_formateado.contrasenia.strip()
     return administrador
 
@@ -168,7 +185,7 @@ def crear_registro_alu(
 
 def crear_registro_mod(nro_id, email, contrasenia, estado):
     reg = mod()
-    reg.id = nro_id
+    reg.nro_id = nro_id
     reg.email = email
     reg.contrasenia = contrasenia
     reg.estado = estado
@@ -177,19 +194,17 @@ def crear_registro_mod(nro_id, email, contrasenia, estado):
 
 def crear_registro_admin(nro_id, email, contrasenia):
     reg = admin()
-    reg.id = nro_id
+    reg.nro_id = nro_id
     reg.email = email
     reg.contrasenia = contrasenia
     return reg
 
 
-# Verificación y apertura de archivos
+
 def abrir_archivo(archivo_fisico,modo= "r+b"):
     if os.path.exists(archivo_fisico):
-        # Si el archivo existe, lo abrimos en modo lectura/escritura binaria
         archivo_logico = open(archivo_fisico, modo)
     else:
-        # Si no existe, lo creamos en modo escritura/lectura binaria
         archivo_logico = open(archivo_fisico, "w+b")
     return archivo_logico
 
@@ -219,13 +234,12 @@ def listado_alumnos(direccion):
         archivo_logico = abrir_archivo(direccion)
         archivo_logico.seek(0,0)
         while archivo_logico.tell()<tam:
-            alum = pickle.load(archivo_logico)
-            
+            alum_archivo = pickle.load(archivo_logico)
             salida = '{:<5} {:<25} {:<20} {:<6} {:<15}'.format(
-                alum.nro_id, alum.email, alum.nombre, alum.sexo, alum.contrasenia
+                alum_archivo.nro_id, alum_archivo.email, alum_archivo.nombre, alum_archivo.sexo, alum_archivo.contrasenia
             )
-            print(salida)  # Imprimir la salida formateada
-        archivo_logico.close()  # Cerrar el archivo
+            print(salida) 
+        archivo_logico.close()  
 
 def listado_moderadores(direccion):
     tam = os.path.getsize(direccion)
@@ -233,16 +247,16 @@ def listado_moderadores(direccion):
         print("No hay moderadores para mostrar.")
     else:
         archivo_logico = abrir_archivo(direccion)
-        archivo_logico.seek(0, 0)  # Volver al principio del archivo
+        archivo_logico.seek(0, 0)  
         print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
         print("-" * 50)
         while archivo_logico.tell() < tam:
-            moderador = pickle.load(archivo_logico)
+            moderador_archivo = pickle.load(archivo_logico)
             salida = '{:<5} {:<25} {:<15}'.format(
-                moderador.nro_id, moderador.email, moderador.contrasenia
+                moderador_archivo.nro_id, moderador_archivo.email, moderador_archivo.contrasenia
             )
-            print(salida)  # Imprimir la salida formateada
-        archivo_logico.close()  # Cerrar el archivo
+            print(salida)  
+        archivo_logico.close()  
 
 def listado_administradores(direccion):
     tam = os.path.getsize(direccion)
@@ -250,37 +264,111 @@ def listado_administradores(direccion):
         print("No hay administradores para mostrar.")
     else:
         archivo_logico = abrir_archivo(direccion)
-        archivo_logico.seek(0, 0)  # Volver al principio del archivo
+        archivo_logico.seek(0, 0)  
         print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
         print("-" * 50)
         while archivo_logico.tell() < tam:
-            administrador = pickle.load(archivo_logico)
+            admin_archivo = pickle.load(archivo_logico)
             salida = '{:<5} {:<25} {:<15}'.format(
-                administrador.nro_id, administrador.email, administrador.contrasenia
+                admin_archivo.nro_id, admin_archivo.email, admin_archivo.contrasenia
             )
-            print(salida)  # Imprimir la salida formateada
-        archivo_logico.close()  # Cerrar el archivo
+            print(salida)  
+        archivo_logico.close() 
 
-def guardar_alumno(clase, direccion):
-    clase = formatear_alum(clase)  # Formateamos el objeto antes de guardarlo
-    archivo_logico = abrir_archivo(direccion, "ab")  # Abrimos en modo append binario
-    pickle.dump(clase, archivo_logico)  # Guardamos el objeto en el archivo
-    archivo_logico.flush()  # Aseguramos que los datos se escriban
-    archivo_logico.close()  # Cerramos el archivo
+def guardar_alumno(clase_alu, direccion):
+    clase = formatear_alum(clase_alu) 
+    archivo_logico = abrir_archivo(direccion, "ab")  
+    pickle.dump(clase, archivo_logico)  
+    archivo_logico.flush()  
+    archivo_logico.close()  
 
-def guardar_moderador(moderador, direccion):
-    moderador = formatear_mod(moderador)  # Formatear el objeto antes de guardarlo
-    archivo_logico = abrir_archivo(direccion, "ab")  # Abrir en modo append binario
-    pickle.dump(moderador, archivo_logico)  # Guardar el objeto en el archivo
-    archivo_logico.flush()  # Asegurarse de escribir los datos
-    archivo_logico.close()  # Cerrar el archivo
+def guardar_moderador(clase_mod, direccion):
+    mod_formateado = formatear_mod(clase_mod)  
+    archivo_logico = abrir_archivo(direccion, "ab")  
+    pickle.dump(mod_formateado, archivo_logico)  
+    archivo_logico.flush()  
+    archivo_logico.close()  
 
-def guardar_administrador(administrador, direccion):
-    administrador = formatear_admin(administrador)  # Formatear el objeto antes de guardarlo
-    archivo_logico = abrir_archivo(direccion, "ab")  # Abrir en modo append binario
-    pickle.dump(administrador, archivo_logico)  # Guardar el objeto en el archivo
-    archivo_logico.flush()  # Asegurarse de escribir los datos
-    archivo_logico.close()  # Cerrar el archivo
+def guardar_administrador(clase_adm, direccion):
+    adm_formateado = formatear_admin(clase_adm)  
+    archivo_logico = abrir_archivo(direccion, "ab")  
+    pickle.dump(adm_formateado, archivo_logico)  
+    archivo_logico.flush()  
+    archivo_logico.close() 
+
+def BusquedaSecuencial(direccion, atributo, dato):
+    archivo_logico = abrir_archivo(direccion)
+    archivo_logico.seek(0, 0)
+    tam_archivo = os.path.getsize(direccion)
+    posicion = -1
+
+    if "alumnos" in direccion:
+        while archivo_logico.tell() < tam_archivo:
+            registro = convertir_a_alu(pickle.load(archivo_logico))
+            if hasattr(registro, atributo):
+                valor = getattr(registro, atributo)
+                if valor == dato:
+                    posicion = archivo_logico.tell()
+                    break
+        else:
+            return -1
+
+    elif "moderadores" in direccion:
+        while archivo_logico.tell() < tam_archivo:
+            registro = convertir_a_mod(pickle.load(archivo_logico))
+            if hasattr(registro, atributo):
+                valor = getattr(registro, atributo)
+                if valor == dato:
+                    posicion = archivo_logico.tell()
+                    break
+        else:
+            return -1
+
+    elif "administradores" in direccion:
+        while archivo_logico.tell() < tam_archivo:
+            registro = convertir_a_admin(pickle.load(archivo_logico))
+            if hasattr(registro, atributo):
+                valor = getattr(registro, atributo)
+                if valor == dato:
+                    posicion = archivo_logico.tell()
+                    break
+        else:
+            return -1
+
+    else:
+        return -1
+    archivo_logico.seek(0, 0)
+    archivo_logico.close()
+    return posicion
+
+def buscar_y_imprimir_registro(direccion, atributo, dato):
+    # Buscar la posición del registro en el archivo
+    posicion = BusquedaSecuencial(direccion, atributo, dato)
+    
+    if posicion == -1:
+        print("Registro no encontrado.")
+        return
+
+    # Abrir el archivo y posicionarse donde se encuentra el registro
+    archivo_logico = abrir_archivo(direccion)
+    archivo_logico.seek(posicion,0)
+
+    # Cargar el registro desde el archivo
+    if "alumnos" in direccion:
+        registro = convertir_a_alu(pickle.load(archivo_logico))
+        imprimir_alu(registro)
+    elif "moderadores" in direccion:
+        registro = convertir_a_mod(pickle.load(archivo_logico))
+        imprimir_mod(registro)
+    elif "administradores" in direccion:
+        registro = convertir_a_admin(pickle.load(archivo_logico))
+        imprimir_admin(registro)
+    else:
+        print("Tipo de archivo desconocido.")
+    
+    archivo_logico.close()
+
+
 def inicializacion():
     alumno1 = crear_registro_alu(
         nro_id=1,
@@ -351,13 +439,16 @@ def inicializacion():
         contrasenia="adminpass456"
     )
 
+
+
+
     guardar_alumno(alumno1,af_alumnos)
     guardar_alumno(alumno2,af_alumnos)
     guardar_alumno(alumno3,af_alumnos)
     guardar_moderador(moderador1,af_moderadores)
     guardar_administrador(administrador1,af_administradores)
-
-
+    
+    buscar_y_imprimir_registro(af_alumnos,"nro_id",1)
 
 
 
