@@ -10,9 +10,10 @@ import io
 
 """
 Integrantes:
-- Matias Abel Poses
-- Santiago Porcel
+- Poses, Matias Abel 
+- Porcel, Santiago 
 - OROÑO, Martin
+- Bellocci, Francisco
 Comision 11
 """
 
@@ -163,7 +164,7 @@ class alu:
         self.fecha_nacimiento = datetime.strptime("1900/12/12", "%Y/%m/%d")
 
 def formatear_alum(self):
-    self.nro_id = str(self.nro_id).ljust(4)  
+    self.nro_id = self.nro_id
     self.email = self.email.ljust(32)
     self.nombre = self.nombre.ljust(32)
     self.sexo = self.sexo.ljust(1)
@@ -181,7 +182,7 @@ def formatear_alum(self):
 
 def reconvertir_a_alu(registro_formateado):
     alumno = alu()
-    alumno.nro_id = int(registro_formateado.nro_id.strip())  
+    alumno.nro_id = registro_formateado.nro_id
     alumno.email = registro_formateado.email.strip()  
     alumno.nombre = registro_formateado.nombre.strip()
     alumno.sexo = registro_formateado.sexo.strip()
@@ -246,6 +247,8 @@ def pos_alumno_id(nro_id):
         return posicion
     else:
         return -1
+    archivo_logico.close()
+
 
 def reg_alumno_id(nro_id):
     posicion = pos_alumno_id(nro_id)
@@ -253,6 +256,7 @@ def reg_alumno_id(nro_id):
         archivo_logico = abrir_archivo(af_alumnos)
         archivo_logico.seek(posicion,0)
         registro = reconvertir_a_alu(pickle.load(archivo_logico))
+        archivo_logico.close()
         return registro
     else:
         return None
@@ -360,11 +364,17 @@ def mod_alum_con_id(nro_id):
         registro_formateado = formatear_alum(registro_convert)
         pickle.dump(registro_formateado,archivo_logico)
         archivo_logico.flush()
+        archivo_logico.close()
 
 def alta_alumno( ):
     nuevo_alumno = alu()
     nuevo_alumno.nombre = input("Ingrese el nombre del alumno: ")
+
     nuevo_alumno.email = input("Ingrese el email del alumno: ")
+    while existe_mail("alumnos",nuevo_alumno.email):
+        print("Email existente. Ingrese un nuevo mail")
+        nuevo_alumno.email = input("Ingrese el email del alumno: ")
+
     nuevo_alumno.sexo = ""
     while nuevo_alumno.sexo not in ["M", "F"]:
         nuevo_alumno.sexo = input("Ingrese el sexo (M/F): ").upper()
@@ -379,12 +389,51 @@ def alta_alumno( ):
     nuevo_alumno.ciudad = input("Ingrese la ciudad: ")
     fecha_nueva = pedir_fecha()
     nuevo_alumno.fecha_nacimiento = datetime.strptime(fecha_nueva, "%Y/%m/%d")
+    nuevo_alumno.nro_id = generador_id("alumnos")
+
     clase = formatear_alum(nuevo_alumno) 
     archivo_logico = abrir_archivo(af_alumnos)  
     archivo_logico.seek(0,2)
     pickle.dump(clase, archivo_logico)  
     archivo_logico.flush()  
     archivo_logico.close()  
+
+def generador_id(nombre_archivo):
+    if nombre_archivo == "alumnos":
+        archivo_logico = abrir_archivo(af_alumnos)
+        archivo_logico.seek(0,0)
+        tamReg = archivo_logico.tell()
+        print
+        archivo_logico.seek(-tamReg,0)
+        registro = reconvertir_a_alu(pickle.load(archivo_logico))
+    elif nombre_archivo == "moderador":
+        archivo_logico = abrir_archivo(af_moderadores)
+        archivo_logico.seek(0,0)
+        tamReg = archivo_logico.tell()
+        
+        archivo_logico.seek(-tamReg,0)
+        registro = reconvertir_a_mod(pickle.load(archivo_logico))
+    archivo_logico.close()
+    return registro.nro_id + 1
+    
+
+def existe_mail(nombre_archivo, mail):
+    condicion = False
+    if nombre_archivo == "alumnos":
+        archivo_logico = abrir_archivo(af_alumnos)
+        archivo_logico.seek(0,0)
+        posicion = pos_alumno_email(mail)
+        if posicion != -1:
+            condicion = True
+    elif nombre_archivo == "moderador":
+        archivo_logico = abrir_archivo(af_moderadores)
+        archivo_logico.seek(0,0)
+        posicion = pos_alumno_email(mail)
+        if posicion != -1:
+            condicion = True
+    archivo_logico.close()
+    return condicion
+
 
 def baja_alumno(nro_id=-1, mail = ""):
     if nro_id !=-1:
@@ -412,8 +461,8 @@ def listado_alumnos(direccion):
         archivo_logico.seek(0,0)
         while archivo_logico.tell()<tam:
             alum_archivo = reconvertir_a_alu(pickle.load(archivo_logico))
-            salida = '{:<5} {:<25} {:<20} {:<6} {:<15}'.format(
-                alum_archivo.nro_id,  alum_archivo.nombre, alum_archivo.sexo, alum_archivo.contrasenia, str(alum_archivo.fecha_nacimiento)
+            salida = '{:<5} {:<25} {:<25} {:<20} {:<25} {:<15}'.format(
+                alum_archivo.nro_id, alum_archivo.email, alum_archivo.nombre, alum_archivo.sexo, alum_archivo.contrasenia, str(alum_archivo.fecha_nacimiento)
             )
             print(salida) 
         archivo_logico.close()
@@ -469,14 +518,14 @@ class mod:
         self.estado = True
 
 def formatear_mod(self):
-    self.nro_id = str(self.nro_id).ljust(4) 
+    self.nro_id = self.nro_id
     self.email = self.email.ljust(32)
     self.contrasenia = self.contrasenia.ljust(32)
     return self
 
 def reconvertir_a_mod(registro_formateado):
     moder = mod()
-    moder.nro_id = int(registro_formateado.id.strip())  
+    moder.nro_id =registro_formateado.id
     moder.email = registro_formateado.email.strip()  
     moder.contrasenia = registro_formateado.contrasenia.strip()
     moder.estado = registro_formateado.estado
@@ -607,14 +656,14 @@ class admin:
         self.contrasenia = ""
 
 def formatear_admin(self):
-    self.nro_id = str(self.nro_id).ljust(4)  
+    self.nro_id =self.nro_id
     self.email = self.email.ljust(32)
     self.contrasenia = self.contrasenia.ljust(32)
     return self
 
 def reconvertir_a_admin(registro_formateado):
     administrador = admin()
-    administrador.nro_id = int(registro_formateado.id.strip())  
+    administrador.nro_id = registro_formateado.nro_id
     administrador.email = registro_formateado.email.strip()  
     administrador.contrasenia = registro_formateado.contrasenia.strip()
     return administrador
@@ -1223,7 +1272,7 @@ def inicio_sesion():
                     print("Credenciales inválidas.")
                     intentos = 0
         elif opcion == "2":
-            """ agregar_estudiante() """
+            alta_alumno()
             print("registro exitoso")
         elif opcion == "3":
             print("Saliendo del programa...")
