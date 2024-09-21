@@ -401,21 +401,24 @@ def alta_alumno( ):
 def generador_id(nombre_archivo):
     if nombre_archivo == "alumnos":
         archivo_logico = abrir_archivo(af_alumnos)
-        archivo_logico.seek(0,0)
-        tamReg = archivo_logico.tell()
-        print
-        archivo_logico.seek(-tamReg,0)
-        registro = reconvertir_a_alu(pickle.load(archivo_logico))
     elif nombre_archivo == "moderador":
         archivo_logico = abrir_archivo(af_moderadores)
-        archivo_logico.seek(0,0)
-        tamReg = archivo_logico.tell()
-        
-        archivo_logico.seek(-tamReg,0)
-        registro = reconvertir_a_mod(pickle.load(archivo_logico))
+    archivo_logico.seek(0, 2) 
+    if archivo_logico.tell() == 0:  
+        archivo_logico.close()
+        return 1
+    archivo_logico.seek(0)
+    registro = None
+    if archivo_logico.tell() < os.path.getsize(af_alumnos if nombre_archivo == "alumnos" else af_moderadores):
+        if nombre_archivo == "alumnos":
+            registro = reconvertir_a_alu(pickle.load(archivo_logico))
+        elif nombre_archivo == "moderador":
+            registro = reconvertir_a_mod(pickle.load(archivo_logico))
     archivo_logico.close()
-    return registro.nro_id + 1
-    
+    if registro:
+        return registro.nro_id + 1
+    return 1
+
 
 def existe_mail(nombre_archivo, mail):
     condicion = False
@@ -490,24 +493,31 @@ def pos_alumno_email(email):
     tam_archivo = os.path.getsize(af_alumnos)
     posicion = 0
     archivo_logico.seek(0, 0)
-    registro = reconvertir_a_alu(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.email != email:
-        posicion = archivo_logico.tell()
+    if tam_archivo != 0:
         registro = reconvertir_a_alu(pickle.load(archivo_logico))
-    if registro.email == email:
-        return posicion
+        while archivo_logico.tell() < tam_archivo and registro.email != email:
+            posicion = archivo_logico.tell()
+            registro = reconvertir_a_alu(pickle.load(archivo_logico))
+        if registro.email == email:
+            return posicion
+        else:
+            return -1
     else:
         return -1
+
 
 def reg_alumno_email(email):
     posicion = pos_alumno_email(email)
     if posicion != -1:
         archivo_logico = abrir_archivo(af_alumnos)
         archivo_logico.seek(posicion, 0)
-        registro = reconvertir_a_alu(pickle.load(archivo_logico))
-        return registro
-    else:
-        return None
+        if archivo_logico.tell() < os.path.getsize(af_alumnos):
+            registro = reconvertir_a_alu(pickle.load(archivo_logico))
+            archivo_logico.close()
+            return registro
+        archivo_logico.close()
+    return None
+
 
 
 class mod:
@@ -570,17 +580,54 @@ def pos_mod_id(nro_id):
     tam_archivo = os.path.getsize(af_moderadores)
     posicion = 0
     archivo_logico.seek(0, 0)
-    registro = reconvertir_a_mod(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.nro_id != nro_id:
-        posicion = archivo_logico.tell()
+
+    if tam_archivo > 0:
         registro = reconvertir_a_mod(pickle.load(archivo_logico))
-    if registro.nro_id == nro_id:
-        return posicion
-    else:
-        return -1
+        while archivo_logico.tell() < tam_archivo:
+            if registro.nro_id == nro_id:
+                archivo_logico.close()
+                return posicion
+            posicion = archivo_logico.tell()
+            if archivo_logico.tell() < tam_archivo:
+                registro = reconvertir_a_mod(pickle.load(archivo_logico))
+        archivo_logico.close()
+    return -1
+
+def pos_mod_email(email):
+    archivo_logico = abrir_archivo(af_moderadores)
+    tam_archivo = os.path.getsize(af_moderadores)
+    posicion = 0
+    archivo_logico.seek(0, 0)
+
+    if tam_archivo > 0:
+        registro = reconvertir_a_mod(pickle.load(archivo_logico))
+        while archivo_logico.tell() < tam_archivo:
+            if registro.email == email:
+                archivo_logico.close()
+                return posicion
+            posicion = archivo_logico.tell()
+            if archivo_logico.tell() < tam_archivo:
+                registro = reconvertir_a_mod(pickle.load(archivo_logico))
+        archivo_logico.close()
+    return -1
+
+
+
+def reg_mod_email(email):
+    posicion = pos_mod_email(email)
+    if posicion != -1:
+        archivo_logico = abrir_archivo(af_moderadores)
+        archivo_logico.seek(posicion, 0)
+        if archivo_logico.tell() < os.path.getsize(af_moderadores):
+            registro = reconvertir_a_mod(pickle.load(archivo_logico))
+            archivo_logico.close()
+            return registro
+        archivo_logico.close()
+    return None
 
 def listado_moderadores(direccion):
-    tam = os.path.getsize(direccion)
+    archivo_logico = abrir_archivo(af_moderadores)
+    tam = os.path.getsize(af_moderadores)
     if tam == 0:
         print("No hay moderadores para mostrar.")
     else:
@@ -625,29 +672,8 @@ def baja_moderador(nro_id=-1, mail=""):
         archivo_logico.close()
 
 
-def pos_mod_email(email):
-    archivo_logico = abrir_archivo(af_moderadores)
-    tam_archivo = os.path.getsize(af_moderadores)
-    posicion = 0
-    archivo_logico.seek(0, 0)
-    registro = reconvertir_a_mod(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.email != email:
-        posicion = archivo_logico.tell()
-        registro = reconvertir_a_mod(pickle.load(archivo_logico))
-    if registro.email == email:
-        return posicion
-    else:
-        return -1
 
-def reg_mod_email(email):
-    posicion = pos_mod_email(email)
-    if posicion != -1:
-        archivo_logico = abrir_archivo(af_moderadores)
-        archivo_logico.seek(posicion, 0)
-        registro = reconvertir_a_mod(pickle.load(archivo_logico))
-        return registro
-    else:
-        return None 
+
 
 class admin:
     def __init__(self):
@@ -706,21 +732,51 @@ def pos_admin_id(nro_id):
     tam_archivo = os.path.getsize(af_administradores)
     posicion = 0
     archivo_logico.seek(0, 0)
+
+    if tam_archivo > 0:
+        registro = reconvertir_a_admin(pickle.load(archivo_logico))
+        while archivo_logico.tell() < tam_archivo:
+            if registro.nro_id == nro_id:
+                archivo_logico.close()
+                return posicion
+            posicion = archivo_logico.tell()
+            if archivo_logico.tell() < tam_archivo:
+                registro = reconvertir_a_admin(pickle.load(archivo_logico))
+        archivo_logico.close()
+    return -1
+
+
+def pos_admin_email(email):
+    archivo_logico = abrir_archivo(af_administradores)
+    tam_archivo = os.path.getsize(af_administradores)
+    posicion = 0
+    archivo_logico.seek(0, 0)
     registro = reconvertir_a_admin(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.nro_id != nro_id:
+    while archivo_logico.tell() < tam_archivo and registro.email != email:
         posicion = archivo_logico.tell()
         registro = reconvertir_a_admin(pickle.load(archivo_logico))
-    if registro.nro_id == nro_id:
+    if registro.email == email:
         return posicion
     else:
         return -1
 
-def listado_administradores(direccion):
-    tam = os.path.getsize(direccion)
+def reg_admin_email(email):
+    posicion = pos_admin_email(email)
+    if posicion != -1:
+        archivo_logico = abrir_archivo(af_administradores)
+        archivo_logico.seek(posicion, 0)
+        registro = reconvertir_a_admin(pickle.load(archivo_logico))
+        return registro
+    else:
+        return None
+
+def listado_administradores():
+    archivo_logico = abrir_archivo(af_administradores)
+    tam = os.path.getsize(af_administradores)
     if tam == 0:
         print("No hay administradores para mostrar.")
     else:
-        archivo_logico = abrir_archivo(direccion)
+        archivo_logico = abrir_archivo(af_administradores)
         archivo_logico.seek(0, 0)  
         print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
         print("-" * 50)
@@ -760,29 +816,7 @@ def baja_administrador(nro_id=-1, mail=""):
         archivo_logico.close()
 
 
-def pos_admin_email(email):
-    archivo_logico = abrir_archivo(af_administradores)
-    tam_archivo = os.path.getsize(af_administradores)
-    posicion = 0
-    archivo_logico.seek(0, 0)
-    registro = reconvertir_a_admin(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.email != email:
-        posicion = archivo_logico.tell()
-        registro = reconvertir_a_admin(pickle.load(archivo_logico))
-    if registro.email == email:
-        return posicion
-    else:
-        return -1
 
-def reg_admin_email(email):
-    posicion = pos_admin_email(email)
-    if posicion != -1:
-        archivo_logico = abrir_archivo(af_administradores)
-        archivo_logico.seek(posicion, 0)
-        registro = reconvertir_a_admin(pickle.load(archivo_logico))
-        return registro
-    else:
-        return None
 
 class likes:
     def __init__(self):
@@ -1227,7 +1261,9 @@ var:
     for i in range(8):
         if estudiantes[i][4] == "activo":
             cont = cont + 1
-    print("las combinaciones posibles son", math.comb(cont, 2)) """
+    print("las combinaciones posibles son", math.comb(cont, 2)) 
+
+ """
 
 """
 var:
@@ -1280,12 +1316,20 @@ def inicio_sesion():
         else:
             print("Opción no válida. Por favor, ingrese una opción válida (1, 2, o 3).")
 
+def imprimir_registro_puntero ():
+    tam = os.path.getsize(af_alumnos)
+    archivo_logico = abrir_archivo(af_alumnos)
+    while archivo_logico.tell() < tam:
+        registro = pickle.load(archivo_logico)
+        
+        print("tamanio del archivo",tam)
+        print("donde esta el puntero",archivo_logico.tell())
 
 def main():
-
+    imprimir_registro_puntero()
+    print("-------------------------------")
     listado_alumnos(af_alumnos)
-    listado_administradores(af_administradores)
-    listado_moderadores(af_moderadores)
+
     while informacion_login[0] == "":
         informacion_login[0], informacion_login[1] = "", ""
         inicio_sesion()
