@@ -745,20 +745,24 @@ def pos_admin_id(nro_id):
         archivo_logico.close()
     return -1
 
-
 def pos_admin_email(email):
     archivo_logico = abrir_archivo(af_administradores)
     tam_archivo = os.path.getsize(af_administradores)
     posicion = 0
     archivo_logico.seek(0, 0)
-    registro = reconvertir_a_admin(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.email != email:
-        posicion = archivo_logico.tell()
+
+    if tam_archivo > 0:  # Verificar que el archivo no esté vacío
         registro = reconvertir_a_admin(pickle.load(archivo_logico))
-    if registro.email == email:
-        return posicion
-    else:
-        return -1
+        while archivo_logico.tell() < tam_archivo:
+            if registro.email == email:
+                archivo_logico.close()
+                return posicion
+            posicion = archivo_logico.tell()
+            if archivo_logico.tell() < tam_archivo:  
+                registro = reconvertir_a_admin(pickle.load(archivo_logico))
+        archivo_logico.close()
+    return -1 
+
 
 def reg_admin_email(email):
     posicion = pos_admin_email(email)
@@ -1285,7 +1289,6 @@ def inicio_sesion():
                 mail = input("Ingrese su email: ")
                 contraseña = getpass.getpass("Ingrese su contraseña: ")
                 existe = existe_usuario(mail, contraseña)
-                print(existe)
                 if (
                     existe
                     and existe[1] == "alumno"
