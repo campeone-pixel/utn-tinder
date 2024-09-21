@@ -597,17 +597,6 @@ var:
 
 
 def imprimir_datos_estudiante(un_estudiante):
-    NOMBRE = 1
-    SEXO = 2
-    HOBBIES = 5
-    MATERIA_FAVORITA = 6
-    DEPORTE_FAVORITO = 7
-    MATERIA_FUERTE = 8
-    MATERIA_DEBIL = 9
-    BIOGRAFIA = 10
-    PAIS = 11
-    CIUDAD = 12
-    FECHA_NACIMIENTO = 13
     print("Nombre:", un_estudiante[NOMBRE])
     print("Sexo:", un_estudiante[SEXO])
     print("Hobbies:", un_estudiante[HOBBIES])
