@@ -261,11 +261,18 @@ def reg_alumno_id(nro_id):
     else:
         return None
 
-def mod_alum_con_id(nro_id):
+def modificacion_alum(nro_id= None, email = None):
+    
+    print("Modificacion de Datos Personales")
     opciones = ["s","n"]
-    posicion = pos_alumno_id(nro_id)
+    if nro_id:
+        posicion = pos_alumno_id(nro_id)
+    if email:
+        print("entro aca")
+        posicion = pos_alumno_email(email)
     if posicion !=-1:
         archivo_logico = abrir_archivo(af_alumnos)
+        archivo_logico.seek(posicion,0)
         registro_convert= reconvertir_a_alu(pickle.load(archivo_logico))
 
         print(f"Nombre: {registro_convert.nombre}")
@@ -993,9 +1000,12 @@ def gestionar_perfil():
     while opcion != "0":
         opcion = imprimir_menu_gestionar_perfil()
         if opcion == "1":
-            """ modificar_estudiante_por_mail(informacion_login[0]) """
+            print(informacion_login[0])
+            modificacion_alum(None,informacion_login[0])
+            print("Datos Modificados")
         elif opcion == "2":
-            print("Eliminando perfil")
+            baja_alumno(None,informacion_login[0])
+            print("Se ha dado de baja el perfil")
             opcion = "0"
         elif opcion != "0":
             print("Opción no válida. Por favor, seleccione una opción válida.")
