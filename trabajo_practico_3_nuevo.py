@@ -1050,7 +1050,7 @@ def ver_candidatos():
                     respuesta = input("¿Quiere darle like? (s/n): ").lower()
                 if respuesta == "s":
                     id_destinatario = registro.nro_id
-                    nuevo_like(remitente,id_destinatario)
+                    nuevo_like(id_remitente,id_destinatario)
             
 
 def imprimir_menu_moderador():
