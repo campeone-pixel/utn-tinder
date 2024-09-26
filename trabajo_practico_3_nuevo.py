@@ -1362,6 +1362,30 @@ def imprimir_registro_puntero ():
         print("tamanio del archivo",tam)
         print("donde esta el puntero",archivo_logico.tell())
 
+def imprimir_registro_puntero_likes():
+    tam = os.path.getsize(af_likes)  
+    archivo_logico = abrir_archivo(af_likes)  
+    
+    while archivo_logico.tell() < tam:
+        like = pickle.load(archivo_logico)
+        print(f"Remitente: {like.remitente}, Destinatario: {like.destinatario}")
+        print("Tamaño del archivo:", tam)
+        print("Posición actual del puntero:", archivo_logico.tell())
+
+    archivo_logico.close()
+
+
+def listado_likes():
+    tam = os.path.getsize(af_likes)  
+    archivo_logico = abrir_archivo(af_likes)
+    
+    print("Listado de Likes:")
+    while archivo_logico.tell() < tam:
+        like = pickle.load(archivo_logico)
+        print(f"Remitente: {like.remitente}, Destinatario: {like.destinatario}")
+    
+    archivo_logico.close()
+
 def main():
     alumnos = abrir_archivo(af_alumnos)
     alumnos.close()
@@ -1373,10 +1397,14 @@ def main():
     likes_todos.close()
     reportes_todos = abrir_archivo(af_reportes)
     reportes_todos.close()
-
+    print("-------------------------------")
     imprimir_registro_puntero()
     print("-------------------------------")
     listado_alumnos(af_alumnos)
+    print("-------------------------------")
+    imprimir_registro_puntero_likes()
+    print("-------------------------------")
+    listado_likes()
 
     while informacion_login[0] == "":
         informacion_login[0], informacion_login[1] = "", ""
