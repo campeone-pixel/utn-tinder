@@ -196,7 +196,7 @@ def reconvertir_a_alu(registro_formateado):
     alumno.biografia = registro_formateado.biografia.strip()
     alumno.pais = registro_formateado.pais.strip()
     alumno.ciudad = registro_formateado.ciudad.strip()
-    alumno.fecha_nacimiento = datetime.strptime(registro_formateado.fecha_nacimiento.strip(), "%Y/%m/%d")
+    alumno.fecha_nacimiento = registro_formateado.fecha_nacimiento
     return alumno
 
 def crear_registro_alu(
@@ -405,44 +405,6 @@ def alta_alumno( ):
     archivo_logico.flush()  
     archivo_logico.close()  
 
-def generador_id(nombre_archivo):
-    if nombre_archivo == "alumnos":
-        archivo_logico = abrir_archivo(af_alumnos)
-    elif nombre_archivo == "moderador":
-        archivo_logico = abrir_archivo(af_moderadores)
-    archivo_logico.seek(0, 2) 
-    if archivo_logico.tell() == 0:  
-        archivo_logico.close()
-        return 1
-    archivo_logico.seek(0)
-    registro = None
-    if archivo_logico.tell() < os.path.getsize(af_alumnos if nombre_archivo == "alumnos" else af_moderadores):
-        if nombre_archivo == "alumnos":
-            registro = reconvertir_a_alu(pickle.load(archivo_logico))
-        elif nombre_archivo == "moderador":
-            registro = reconvertir_a_mod(pickle.load(archivo_logico))
-    archivo_logico.close()
-    if registro:
-        return registro.nro_id + 1
-    return 1
-
-
-def existe_mail(nombre_archivo, mail):
-    condicion = False
-    if nombre_archivo == "alumnos":
-        archivo_logico = abrir_archivo(af_alumnos)
-        archivo_logico.seek(0,0)
-        posicion = pos_alumno_email(mail)
-        if posicion != -1:
-            condicion = True
-    elif nombre_archivo == "moderador":
-        archivo_logico = abrir_archivo(af_moderadores)
-        archivo_logico.seek(0,0)
-        posicion = pos_alumno_email(mail)
-        if posicion != -1:
-            condicion = True
-    archivo_logico.close()
-    return condicion
 
 
 def baja_alumno(nro_id=-1, mail = ""):
@@ -476,23 +438,6 @@ def listado_alumnos(direccion):
             )
             print(salida) 
         archivo_logico.close()
-
-def imprimir_datos_estudiante(un_estudiante):
-    print("Nombre:", un_estudiante.nombre)
-    print("Sexo:", un_estudiante.sexo)
-    print("Hobbies:", un_estudiante.hobbies)
-    print("Materia favorita:", un_estudiante.materia_favorita)
-    print("Deporte favorito:", un_estudiante.deporte_favorito)
-    print("Materia fuerte:", un_estudiante.materia_fuerte)
-    print("Materia débil:", un_estudiante.materia_debil)
-    print("Biografía:", un_estudiante.biografia)
-    print("País:", un_estudiante.pais)
-    print("Ciudad:", un_estudiante.ciudad)
-    edad = calcular_edad(un_estudiante.fecha_nacimiento)
-    if edad is not None:
-        print("Edad:", edad)
-    else:
-        print("Fecha de nacimiento inválida:", un_estudiante.fecha_nacimiento)
 
 
 def pos_alumno_email(email):
@@ -679,9 +624,6 @@ def baja_moderador(nro_id=-1, mail=""):
         archivo_logico.close()
 
 
-
-
-
 class admin:
     def __init__(self):
         self.nro_id = 0
@@ -758,7 +700,7 @@ def pos_admin_email(email):
     posicion = 0
     archivo_logico.seek(0, 0)
 
-    if tam_archivo > 0:  # Verificar que el archivo no esté vacío
+    if tam_archivo > 0:  
         registro = reconvertir_a_admin(pickle.load(archivo_logico))
         while archivo_logico.tell() < tam_archivo:
             if registro.email == email:
@@ -903,6 +845,66 @@ def existe_usuario(email, password):
 
     return None
 
+def generador_id(nombre_archivo):
+    if nombre_archivo == "alumnos":
+        tam = os.path.getsize(af_alumnos)
+    elif nombre_archivo == "moderador":
+        tam = os.path.getsize(af_moderadores)
+    if nombre_archivo == "alumnos":
+        archivo_logico = abrir_archivo(af_alumnos)
+    elif nombre_archivo == "moderador":
+        archivo_logico = abrir_archivo(af_moderadores)
+
+    nro_id = 0
+    while archivo_logico.tell() < tam:
+            registro = pickle.load(archivo_logico)
+            nro_id = registro.nro_id
+
+    archivo_logico.close()
+    return nro_id + 1
+
+
+def existe_mail(nombre_archivo, mail):
+    condicion = False
+    if nombre_archivo == "alumnos":
+        archivo_logico = abrir_archivo(af_alumnos)
+        archivo_logico.seek(0,0)
+        posicion = pos_alumno_email(mail)
+        if posicion != -1:
+            condicion = True
+    elif nombre_archivo == "moderador":
+        archivo_logico = abrir_archivo(af_moderadores)
+        archivo_logico.seek(0,0)
+        posicion = pos_alumno_email(mail)
+        if posicion != -1:
+            condicion = True
+    archivo_logico.close()
+    return condicion
+
+def estudiante_activo_por_mail(email):
+    valor = False
+    registro = reg_alumno_email(email)
+    if registro.estado:
+        valor = True
+    return valor
+
+
+def imprimir_datos_estudiante(un_estudiante):
+    print("Nombre:", un_estudiante.nombre)
+    print("Sexo:", un_estudiante.sexo)
+    print("Hobbies:", un_estudiante.hobbies)
+    print("Materia favorita:", un_estudiante.materia_favorita)
+    print("Deporte favorito:", un_estudiante.deporte_favorito)
+    print("Materia fuerte:", un_estudiante.materia_fuerte)
+    print("Materia débil:", un_estudiante.materia_debil)
+    print("Biografía:", un_estudiante.biografia)
+    print("País:", un_estudiante.pais)
+    print("Ciudad:", un_estudiante.ciudad)
+    edad = calcular_edad(un_estudiante.fecha_nacimiento)
+    if edad is not None:
+        print("Edad:", edad)
+    else:
+        print("Fecha de nacimiento inválida:", un_estudiante.fecha_nacimiento)
 
 
 
@@ -1005,6 +1007,7 @@ def gestionar_perfil():
             print("Datos Modificados")
         elif opcion == "2":
             baja_alumno(None,informacion_login[0])
+            informacion_login[0] = ""
             print("Se ha dado de baja el perfil")
             opcion = "0"
         elif opcion != "0":
@@ -1022,13 +1025,33 @@ def gestionar_candidatos():
     while opcion != "0":
         opcion = imprimir_menu_gestionar_candidatos()
         if opcion == "1":
-            """ ver_candidatos() """
+            ver_candidatos()
         elif opcion == "2":
             """ reportar_candidato() """
         elif opcion != "0":
             print("Opción no válida. Por favor, seleccione una opción válida.\n")
 
+def ver_candidatos():
+    tam = os.path.getsize(af_alumnos)
+    if tam == 0:
+        print("no hay alumnos para mostrar")
+    else:
+        archivo_logico = abrir_archivo(af_alumnos)
+        remitente = reconvertir_a_alu(reg_alumno_email(informacion_login[0]))
+        id_remitente = remitente.nro_id
+        while archivo_logico.tell()<tam:
 
+            registro = reconvertir_a_alu(pickle.load(archivo_logico))
+            if registro.nro_id != id_remitente:
+                imprimir_datos_estudiante(registro)
+                opciones = ["s","n"]
+                respuesta = ""
+                while respuesta not in opciones:
+                    respuesta = input("¿Quiere darle like? (s/n): ").lower()
+                if respuesta == "s":
+                    id_destinatario = registro.nro_id
+                    nuevo_like(remitente,id_destinatario)
+            
 
 def imprimir_menu_moderador():
     print("1. Gestionar usuarios")
@@ -1075,9 +1098,9 @@ def estudiante():
             if not conectado():
                 opcion = "6"
         elif opcion == "2":
-            """ gestionar_candidatos() """
+            gestionar_candidatos()
         elif opcion == "3":
-            """ edad_faltante() """
+            edad_faltante()
         elif opcion == "4":
             """ reporte_estadistico() """
         elif opcion == "5":
@@ -1302,7 +1325,7 @@ def inicio_sesion():
                 if (
                     existe
                     and existe[1] == "alumno"
-            
+                    and estudiante_activo_por_mail(mail)
                 ):
                     informacion_login[0] = existe[0]
                     informacion_login[1] = existe[1]
@@ -1332,6 +1355,7 @@ def inicio_sesion():
 def imprimir_registro_puntero ():
     tam = os.path.getsize(af_alumnos)
     archivo_logico = abrir_archivo(af_alumnos)
+    
     while archivo_logico.tell() < tam:
         registro = pickle.load(archivo_logico)
         
@@ -1339,6 +1363,17 @@ def imprimir_registro_puntero ():
         print("donde esta el puntero",archivo_logico.tell())
 
 def main():
+    alumnos = abrir_archivo(af_alumnos)
+    alumnos.close()
+    moderadores_todos = abrir_archivo(af_moderadores)
+    moderadores_todos.close()
+    administradores_todos = abrir_archivo(af_administradores)
+    administradores_todos.close()
+    likes_todos = abrir_archivo(af_likes)
+    likes_todos.close()
+    reportes_todos = abrir_archivo(af_reportes)
+    reportes_todos.close()
+
     imprimir_registro_puntero()
     print("-------------------------------")
     listado_alumnos(af_alumnos)
