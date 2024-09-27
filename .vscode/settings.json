@@ -1,24 +1,34 @@
 {
-    "window.zoomLevel": 2,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeFolding": true,
+    "editor.showFoldingControls": "always",
+    "editor.foldingHighlight": true,
+    "editor.folding": true,
     "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
     "[python]": {
-        "editor.rulers": [
-            88
-        ],
+        "editor.formatOnType": true,
         "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-        },
-        "editor.formatOnType": true
+        "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "python.analysis.typeCheckingMode": "off", // Cambiar de "strict" a "off" para desactivar la comprobación de tipos
-    "python.analysis.autoSearchPaths": true,
-    "python.languageServer": "Default",
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportUnknownArgumentType": "none",
-        "reportMissingParameterType": "none",
-        "reportUnknownParameterType": "none",
-        "reportUnknownVariableType": "none",
-        "reportPossiblyUnboundVariable": "none"
-    }
+    "[javascript]": {},
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[javascriptreact]": {},
+    "workbench.iconTheme": "material-icon-theme",
+    "[scss]": {},
+    "[html]": {},
+    "[typescript]": {},
+    "editor.wordWrap": "on",
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "files.associations": {
+        "*.ts": "typescript"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[pip-requirements]": {},
+    "git.enableSmartCommit": true
 }
