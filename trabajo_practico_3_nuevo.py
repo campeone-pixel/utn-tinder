@@ -495,15 +495,14 @@ def pos_mod_email(email):
         return -1
 
 def reg_mod_email(email):
-    posicion = pos_admin_email(email)
+    posicion = pos_mod_email(email)
     if posicion != -1:
         archivo_logico = abrir_archivo(AF_MODERADORES)
         archivo_logico.seek(posicion, 0)
         if archivo_logico.tell() < os.path.getsize(AF_MODERADORES):
-            registro = reconvertir_a_admin(pickle.load(archivo_logico))
+            registro = reconvertir_a_mod(pickle.load(archivo_logico))
             archivo_logico.close()
             return registro
-
     else:
         return None
 
@@ -843,6 +842,7 @@ def existe_usuario(email, password):
         return [registro_alumno.email,  "alumno"]
     registro_moderador = reg_mod_email(email)
     if registro_moderador and registro_moderador.contrasenia == password:
+        print(registro_moderador.email)
         return [registro_moderador.email,  "moderador"]
     registro_administrador = reg_admin_email(email)
     if registro_administrador and registro_administrador.contrasenia == password:
@@ -1286,7 +1286,6 @@ def inicio_sesion():
                 mail = input("Ingrese su email: ")
                 contraseña = getpass.getpass("Ingrese su contraseña: ")
                 existe = existe_usuario(mail, contraseña)
-
                 if (
                     existe
                     and existe[1] == "alumno"
