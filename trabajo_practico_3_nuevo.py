@@ -405,33 +405,6 @@ def reg_alumno_email(email):
         archivo_logico.close()
     return None
 
-def listado_alumnos(direccion):
-    tam = os.path.getsize(direccion)
-    if tam == 0:
-        print("no hay nada para mostrar")
-    else:
-        archivo_logico = abrir_archivo(direccion)
-        archivo_logico.seek(0, 0)
-        while archivo_logico.tell() < tam:
-            alum_archivo = reconvertir_a_alu(pickle.load(archivo_logico))
-            salida = (
-                f'{alum_archivo.nro_id:<5} '
-                f'{alum_archivo.email:<25} '
-                f'{alum_archivo.nombre:<25} '
-                f'{alum_archivo.sexo:<20} '
-                f'{alum_archivo.contrasenia:<25} '
-                f'{str(alum_archivo.fecha_nacimiento):<15}'
-            )
-            print(salida)
-        archivo_logico.close()
-
-def imprimir_registro_puntero_alumnos ():
-    tam = os.path.getsize(AF_ALUMNOS)
-    archivo_logico = abrir_archivo(AF_ALUMNOS)
-    while archivo_logico.tell() < tam:
-        pickle.load(archivo_logico)
-        print("tamanio del archivo",tam)
-        print("donde esta el puntero",archivo_logico.tell())
 
 # ---- Moderadores ----
 class Mod():
@@ -449,7 +422,7 @@ def formatear_mod(self):
 
 def reconvertir_a_mod(registro_formateado):
     moder = Mod()
-    moder.nro_id =registro_formateado.id
+    moder.nro_id =registro_formateado.nro_id
     moder.email = registro_formateado.email.strip()
     moder.contrasenia = registro_formateado.contrasenia.strip()
     moder.estado = registro_formateado.estado
@@ -512,55 +485,34 @@ def pos_mod_email(email):
     tam_archivo = os.path.getsize(AF_MODERADORES)
     posicion = 0
     archivo_logico.seek(0, 0)
-
-    if tam_archivo > 0:
+    registro = reconvertir_a_mod(pickle.load(archivo_logico))
+    while archivo_logico.tell() < tam_archivo and registro.email != email:
+        posicion = archivo_logico.tell()
         registro = reconvertir_a_mod(pickle.load(archivo_logico))
-        while archivo_logico.tell() < tam_archivo:
-            if registro.email == email:
-                archivo_logico.close()
-                return posicion
-            posicion = archivo_logico.tell()
-            if archivo_logico.tell() < tam_archivo:
-                registro = reconvertir_a_mod(pickle.load(archivo_logico))
-        archivo_logico.close()
-    return -1
+    if registro.email == email:
+        return posicion
+    else:
+        return -1
 
 def reg_mod_email(email):
-    posicion = pos_mod_email(email)
+    posicion = pos_admin_email(email)
     if posicion != -1:
         archivo_logico = abrir_archivo(AF_MODERADORES)
         archivo_logico.seek(posicion, 0)
         if archivo_logico.tell() < os.path.getsize(AF_MODERADORES):
-            registro = reconvertir_a_mod(pickle.load(archivo_logico))
+            registro = reconvertir_a_admin(pickle.load(archivo_logico))
             archivo_logico.close()
             return registro
-        archivo_logico.close()
-    return None
 
-def listado_moderadores():
-    archivo_logico = abrir_archivo(AF_MODERADORES)
-    tam = os.path.getsize(AF_MODERADORES)
-    if tam == 0:
-        print("No hay moderadores para mostrar.")
     else:
-        archivo_logico.seek(0, 0)
-        print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
-        print("-" * 50)
-        while archivo_logico.tell() < tam:
-            moderador_archivo = pickle.load(archivo_logico)
-            salida = (
-                f"{moderador_archivo.nro_id:<5} "
-                f"{moderador_archivo.email:<25} "
-                f"{moderador_archivo.contrasenia:<15}"
-            )
-            print(salida)
-        archivo_logico.close()
+        return None
 
 def alta_moderador():
     nuevo_moderador = Mod()
     nuevo_moderador.email = input("Ingrese el email del moderador: ")
     nuevo_moderador.contrasenia = input("Ingrese la contraseña del moderador: ")
     nuevo_moderador.estado = True
+    nuevo_moderador.nro_id = generador_id("moderador")
     clase = formatear_mod(nuevo_moderador)
     archivo_logico = abrir_archivo(AF_MODERADORES)
     archivo_logico.seek(0, 2)
@@ -683,30 +635,11 @@ def reg_admin_email(email):
     else:
         return None
 
-
-def listado_administradores():
-    archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
-    tam = os.path.getsize(AF_ADMINISTRADORES)
-    if tam == 0:
-        print("No hay administradores para mostrar.")
-    else:
-        archivo_logico.seek(0, 0)
-        print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
-        print("-" * 50)
-        while archivo_logico.tell() < tam:
-            admin_archivo = pickle.load(archivo_logico)
-            salida = (
-                f"{admin_archivo.nro_id:<5} "
-                f"{admin_archivo.email:<25} "
-                f"{admin_archivo.contrasenia:<15}"
-            )
-            print(salida)
-        archivo_logico.close()
-
 def alta_administrador():
     nuevo_administrador = Admin()
     nuevo_administrador.email = input("Ingrese el email del administrador: ")
     nuevo_administrador.contrasenia = input("Ingrese la contraseña del administrador: ")
+    nuevo_administrador.nro_id = generador_id("administrador")
     clase = formatear_admin(nuevo_administrador)
     archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
     archivo_logico.seek(0, 2)
@@ -780,6 +713,47 @@ def hay_match(usuario1, usuario2):
     archivo_logico.close()
     return False
 
+
+
+# ---- Reportes ----
+class Reportes:
+    def __init__(self):
+        self.id_reportante= 0
+        self.id_reportado = 0
+        self.razon_reporte = ""
+        self.estado = 0
+
+
+# ------ Funciones para imprimir los datos --------
+
+def listado_administradores():
+    archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
+    tam = os.path.getsize(AF_ADMINISTRADORES)
+    if tam == 0:
+        print("No hay administradores para mostrar.")
+    else:
+        archivo_logico.seek(0, 0)
+        print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
+        print("-" * 50)
+        while archivo_logico.tell() < tam:
+            admin_archivo = pickle.load(archivo_logico)
+            salida = (
+                f"{admin_archivo.nro_id:<5} "
+                f"{admin_archivo.email:<25} "
+                f"{admin_archivo.contrasenia:<15}"
+            )
+            print(salida)
+        archivo_logico.close()
+
+def imprimir_registro_puntero_administradores():
+    tam = os.path.getsize(AF_ADMINISTRADORES)
+    archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
+    while archivo_logico.tell() < tam:
+        pickle.load(archivo_logico)
+        print("Tamaño del archivo:", tam)
+        print("Posición actual del puntero:", archivo_logico.tell())
+    archivo_logico.close()
+
 def imprimir_registro_puntero_likes():
     tam = os.path.getsize(AF_LIKES)
     archivo_logico = abrir_archivo(AF_LIKES)
@@ -800,15 +774,61 @@ def listado_likes():
         print(f"Remitente: {like.remitente}, Destinatario: {like.destinatario}")
     archivo_logico.close()
 
+def listado_moderadores():
+    archivo_logico = abrir_archivo(AF_MODERADORES)
+    tam = os.path.getsize(AF_MODERADORES)
+    if tam == 0:
+        print("No hay moderadores para mostrar.")
+    else:
+        archivo_logico.seek(0, 0)
+        print(f"{'ID':<5} {'Email':<25} {'Contraseña':<15}")
+        print("-" * 50)
+        while archivo_logico.tell() < tam:
+            moderador_archivo = pickle.load(archivo_logico)
+            salida = (
+                f"{moderador_archivo.nro_id:<5} "
+                f"{moderador_archivo.email:<25} "
+                f"{moderador_archivo.contrasenia:<15}"
+            )
+            print(salida)
+        archivo_logico.close()
 
-# ---- Reportes ----
-class Reportes:
-    def __init__(self):
-        self.id_reportante= 0
-        self.id_reportado = 0
-        self.razon_reporte = ""
-        self.estado = 0
+def imprimir_registro_puntero_moderadores():
+    tam = os.path.getsize(AF_MODERADORES)
+    archivo_logico = abrir_archivo(AF_MODERADORES)
+    while archivo_logico.tell() < tam:
+        pickle.load(archivo_logico)
+        print("Tamaño del archivo:", tam)
+        print("Posición actual del puntero:", archivo_logico.tell())
+    archivo_logico.close()
 
+def listado_alumnos(direccion):
+    tam = os.path.getsize(direccion)
+    if tam == 0:
+        print("no hay nada para mostrar")
+    else:
+        archivo_logico = abrir_archivo(direccion)
+        archivo_logico.seek(0, 0)
+        while archivo_logico.tell() < tam:
+            alum_archivo = reconvertir_a_alu(pickle.load(archivo_logico))
+            salida = (
+                f'{alum_archivo.nro_id:<5} '
+                f'{alum_archivo.email:<25} '
+                f'{alum_archivo.nombre:<25} '
+                f'{alum_archivo.sexo:<20} '
+                f'{alum_archivo.contrasenia:<25} '
+                f'{str(alum_archivo.fecha_nacimiento):<15}'
+            )
+            print(salida)
+        archivo_logico.close()
+
+def imprimir_registro_puntero_alumnos ():
+    tam = os.path.getsize(AF_ALUMNOS)
+    archivo_logico = abrir_archivo(AF_ALUMNOS)
+    while archivo_logico.tell() < tam:
+        pickle.load(archivo_logico)
+        print("tamanio del archivo",tam)
+        print("donde esta el puntero",archivo_logico.tell())
 
 # ---- Comprobaciones ----
 def conectado():
@@ -818,37 +838,34 @@ def conectado():
     return valor
 
 def existe_usuario(email, password):
-
     registro_alumno = reg_alumno_email(email)
     if registro_alumno and registro_alumno.contrasenia == password:
         return [registro_alumno.email,  "alumno"]
-
     registro_moderador = reg_mod_email(email)
     if registro_moderador and registro_moderador.contrasenia == password:
         return [registro_moderador.email,  "moderador"]
-
     registro_administrador = reg_admin_email(email)
-    print(registro_administrador.email)
     if registro_administrador and registro_administrador.contrasenia == password:
         return [registro_administrador.email,  "administrador"]
-
     return None
 
 def generador_id(nombre_archivo):
     if nombre_archivo == "alumnos":
         tam = os.path.getsize(AF_ALUMNOS)
-    elif nombre_archivo == "moderador":
-        tam = os.path.getsize(AF_MODERADORES)
-    if nombre_archivo == "alumnos":
         archivo_logico = abrir_archivo(AF_ALUMNOS)
     elif nombre_archivo == "moderador":
+        tam = os.path.getsize(AF_MODERADORES)
         archivo_logico = abrir_archivo(AF_MODERADORES)
-
+    elif nombre_archivo == "administrador":
+        tam = os.path.getsize(AF_ADMINISTRADORES)
+        archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
+    elif nombre_archivo == "reporte":
+        tam = os.path.getsize(AF_ADMINISTRADORES)
+        archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
     nro_id = 0
     while archivo_logico.tell() < tam:
         registro = pickle.load(archivo_logico)
         nro_id = registro.nro_id
-
     archivo_logico.close()
     return nro_id + 1
 
@@ -921,6 +938,7 @@ def matcheos_comb():
 
     archivo_logico.close()
     print("las combinaciones posibles son", math.comb(cont, 2))
+
 
 
 
@@ -1315,16 +1333,28 @@ def main():
     likes_todos.close()
     reportes_todos = abrir_archivo(AF_REPORTES)
     reportes_todos.close()
-    print("-------------------------------")
-    imprimir_registro_puntero_alumnos()
-    print("-------------------------------")
-    listado_alumnos(AF_ALUMNOS)
-    print("-------------------------------")
-    imprimir_registro_puntero_likes()
-    print("-------------------------------")
-    listado_likes()
-    print("-------------------------------")
-    listado_administradores()
+
+    # Solo para ver los cambios de datos
+    # print("-------------------------------")
+    # imprimir_registro_puntero_alumnos()
+    # print("-------------------------------")
+    # listado_alumnos(AF_ALUMNOS)
+    # print("-------------------------------")
+    # imprimir_registro_puntero_likes()
+    # print("-------------------------------")
+    # listado_likes()
+    # print("-------------------------------")
+    # listado_administradores()
+    # print("-------------------------------")
+    # imprimir_registro_puntero_administradores()
+    # print("-------------------------------")
+    # listado_moderadores()
+    # print("-------------------------------")
+    # imprimir_registro_puntero_moderadores()
+    # print("-------------------------------")
+    # print("\n")
+    # Solo para ver los cambios de datos
+
     while informacion_login[0] == "":
         informacion_login[0], informacion_login[1] = "", ""
         inicio_sesion()
