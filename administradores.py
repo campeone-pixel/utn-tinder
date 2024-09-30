@@ -134,7 +134,7 @@ def formatear_alum(self):
     self.biografia = self.biografia.ljust(255)
     self.pais = self.pais.ljust(32)
     self.ciudad = self.ciudad.ljust(32)
-    #self.fecha_nacimiento = self.fecha_nacimiento.strftime("%Y/%m/%d").ljust(10)
+    self.fecha_nacimiento = self.fecha_nacimiento.strftime("%Y/%m/%d").ljust(10)
     return self
 
 def reconvertir_a_alu(registro_formateado):
@@ -462,20 +462,6 @@ def mod_mod_con_id(nro_id):
         pickle.dump(registro_formateado, archivo_logico)
         archivo_logico.flush()
 
-def pos_alumno_id(nro_id):
-    archivo_logico = abrir_archivo(AF_ALUMNOS)
-    tam_archivo = os.path.getsize(AF_ALUMNOS)
-    posicion = 0
-    archivo_logico.seek(0, 0)
-    registro = reconvertir_a_alu(pickle.load(archivo_logico))
-    while archivo_logico.tell() < tam_archivo and registro.nro_id != nro_id:
-        posicion = archivo_logico.tell()
-        registro = reconvertir_a_alu(pickle.load(archivo_logico))
-    if registro.nro_id == nro_id:
-        return posicion
-    else:
-        return -1
-    archivo_logico.close()
 
 def pos_mod_id(nro_id):
     archivo_logico = abrir_archivo(AF_MODERADORES)
@@ -483,11 +469,13 @@ def pos_mod_id(nro_id):
     posicion = 0
     archivo_logico.seek(0, 0)
     registro = reconvertir_a_mod(pickle.load(archivo_logico))
+    print("entro aca")
+    print (type(registro.nro_id))
     while archivo_logico.tell() < tam_archivo and registro.nro_id != nro_id:
         posicion = archivo_logico.tell()
         registro = reconvertir_a_mod(pickle.load(archivo_logico))
     if registro.nro_id == nro_id:
-        print (registro.nro_id)
+
         return posicion
     else:
         return -1
@@ -535,7 +523,7 @@ def alta_moderador():
 def baja_moderador(nro_id=-1, mail=""):
     if nro_id != -1:
         posicion = pos_mod_id(nro_id)
-        print (posicion)
+
     if mail != "":
         posicion = pos_mod_email(mail)
     if posicion != -1:
@@ -913,6 +901,13 @@ def estudiante_activo_por_mail(email):
         valor = True
     return valor
 
+def moderador_activo_por_mail(email):
+    valor = False
+    registro = reg_mod_email(email)
+    if registro.estado:
+        valor = True
+    return valor
+
 # ---- Bonustracks ----
 """
 type:
@@ -1112,25 +1107,6 @@ def imprimir_menu_moderador():
     os.system("cls")
     return opcion
 
-"""
-var:
-    opcion:string
-
-"""
-def moderador():
-    opcion = ""
-    while opcion != "3":
-        opcion = imprimir_menu_moderador()
-        if opcion == "1":
-            """ menu_gest_user() """
-        elif opcion == "2":
-            """ gestionar_reportes() """
-        elif opcion == "3":
-            informacion_login[0] = ""
-        else:
-            print("Opción no válida. Por favor, seleccione una opción válida.")
-        if not conectado():
-            opcion = "3"
 
 def estudiante():
     opcion = ""
@@ -1194,12 +1170,12 @@ def eliminar_usuario ():
             opcion = input ("Que desea eliminar? Estudiante 'e', Moderador 'm': ")
         if opcion == "e":
             listado_alumnos(AF_ALUMNOS)
-            id =int(input("Seleccione el usuario que desea eliminar por id: "))
-            baja_alumno(id)
+            nro_id =int(input("Seleccione el usuario que desea eliminar por id: "))
+            baja_alumno(nro_id)
         elif opcion == "m":
             listado_moderadores()
-            id =input("Seleccione el usuario que desea eliminar por id: ")
-            baja_moderador(id)
+            nro_id =int(input("Seleccione el usuario que desea eliminar por id: "))
+            baja_moderador(nro_id)
         else:
             print ("Volviendo al menu anterior ")
 
@@ -1213,11 +1189,11 @@ def gestionar_usuarios():
         print("4. Volver")
         opcion = input("Selecciona una opción: ")
         if opcion == "1":
-            eliminar_usuario()  # Función para eliminar usuario """
+            eliminar_usuario()
         elif opcion == "2":
-            alta_moderador()  # Función para dar de alta un moderador
+            alta_moderador()
         elif opcion == "3":
-            baja_administrador(None, informacion_login[0])  # Función para desactivar usuario
+            baja_administrador(None, informacion_login[0])
         elif opcion == "4":
             print("Volviendo al menú principal...")
         else:
@@ -1330,7 +1306,7 @@ def inicio_sesion():
                     informacion_login[1] = existe[1]
                     print("Inicio exitoso\n")
                     intentos = 0
-                elif existe and existe[1] == "moderador":
+                elif existe and existe[1] == "moderador" and moderador_activo_por_mail(mail):
                     informacion_login[0] = existe[0]
                     informacion_login[1] = existe[1]
                     print("Inicio exitoso\n")
@@ -1395,7 +1371,7 @@ def main():
         if conectado():
             if informacion_login[1] == "moderador":
                 print("Sos un moderador")
-                moderador()
+                menu_moderador()
             elif informacion_login[1] == "alumno":
                 estudiante()
             elif informacion_login[1] == "administrador":
