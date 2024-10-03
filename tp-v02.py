@@ -153,7 +153,7 @@ def reconvertir_a_alu(registro_formateado):
     alumno.biografia = registro_formateado.biografia.strip()
     alumno.pais = registro_formateado.pais.strip()
     alumno.ciudad = registro_formateado.ciudad.strip()
-    alumno.fecha_nacimiento = registro_formateado.fecha_nacimiento
+    alumno.fecha_nacimiento = datetime.strptime(registro_formateado.fecha_nacimiento, "%Y/%m/%d")
     return alumno
 
 def crear_registro_alu(
@@ -361,21 +361,28 @@ def alta_alumno( ):
 
     archivo_logico.close()
 
-def baja_alumno(nro_id=-1, mail = ""):
-    if nro_id !=-1:
-        posicion = pos_alumno_id(nro_id)
-    if mail !="":
-        posicion = pos_alumno_email(mail)
-    if posicion != -1:
-        archivo_logico = abrir_archivo(AF_ALUMNOS)
-        archivo_logico.seek(posicion,0)
-        registro = reconvertir_a_alu(pickle.load(archivo_logico))
-        registro.estado = False
-        archivo_logico.seek(posicion, 0)
-        formateado = formatear_alum(registro)
-        pickle.dump(formateado,archivo_logico)
-        archivo_logico.flush()
-        archivo_logico.close()
+def baja_alumno_id(nro_id):
+    posicion = pos_alumno_id(nro_id)
+    archivo_logico = abrir_archivo(AF_ALUMNOS)
+    archivo_logico.seek(posicion,0)
+    registro = reconvertir_a_alu(pickle.load(archivo_logico))
+    registro.estado = False
+    archivo_logico.seek(posicion, 0)
+    formateado = formatear_alum(registro)
+    pickle.dump(formateado,archivo_logico)
+    archivo_logico.flush()
+    archivo_logico.close()
+
+def baja_alumno_nombre(posicion):
+    archivo_logico = abrir_archivo(AF_ALUMNOS)
+    archivo_logico.seek(posicion,0)
+    registro = reconvertir_a_alu(pickle.load(archivo_logico))
+    registro.estado = False
+    archivo_logico.seek(posicion, 0)
+    formateado = formatear_alum(registro)
+    pickle.dump(formateado,archivo_logico)
+    archivo_logico.flush()
+    archivo_logico.close()
 
 def pos_alumno_email(email):
     archivo_logico = abrir_archivo(AF_ALUMNOS)
@@ -404,6 +411,22 @@ def reg_alumno_email(email):
             return registro
         archivo_logico.close()
     return None
+
+
+def buscar_estudiante_por_nombre (name):
+    archivo_logico = abrir_archivo(AF_ALUMNOS)
+    tam_archivo = os.path.getsize(AF_ALUMNOS)
+    posicion = 0
+    archivo_logico.seek(0, 0)
+    registro = reconvertir_a_alu(pickle.load(archivo_logico))
+    while archivo_logico.tell() < tam_archivo and registro.nombre != name:
+        posicion = archivo_logico.tell()
+        registro = reconvertir_a_alu(pickle.load(archivo_logico))
+    if registro.nombre == name:
+        return posicion
+    else:
+        return -1
+    archivo_logico.close()
 
 
 # ---- Moderadores ----
@@ -818,6 +841,7 @@ def listado_alumnos(direccion):
                 f'{alum_archivo.nombre:<25} '
                 f'{alum_archivo.sexo:<20} '
                 f'{alum_archivo.contrasenia:<25} '
+                f'{alum_archivo.estado:<25} '
                 f'{str(alum_archivo.fecha_nacimiento):<15}'
             )
             print(salida)
@@ -1050,10 +1074,10 @@ def gestionar_perfil():
         opcion = imprimir_menu_gestionar_perfil()
         if opcion == "1":
             print(informacion_login[0])
-            modificacion_alum(None,informacion_login[0])
+            modificacion_alum(informacion_login[0])
             print("Datos Modificados")
         elif opcion == "2":
-            baja_alumno(None,informacion_login[0])
+            baja_alumno_id(informacion_login[0])
             informacion_login[0] = ""
             print("Se ha dado de baja el perfil")
             opcion = "0"
@@ -1171,7 +1195,7 @@ def eliminar_usuario ():
         if opcion == "e":
             listado_alumnos(AF_ALUMNOS)
             nro_id =int(input("Seleccione el usuario que desea eliminar por id: "))
-            baja_alumno(nro_id)
+            baja_alumno_id(nro_id)
         elif opcion == "m":
             listado_moderadores()
             nro_id =int(input("Seleccione el usuario que desea eliminar por id: "))
@@ -1225,11 +1249,35 @@ def menu_gest_user():
     opcion = input("Seleccione una opción: ")
     while opcion != "2":
         if opcion == "1":
-            #desactivar_usuario()
+            desactivar_usuario()
             opcion = input("Seleccione una opción: ")
         else:
             opcion = input("Seleccione una opción: ")
     print("Saliendo\n")
+
+def desactivar_usuario():
+    listado_alumnos(AF_ALUMNOS)
+    name = input(
+        "Seleccione el nombre del usuario que quiere desactivar, si no lo conoce coloque '*': "
+    )
+
+    if name != "*":
+        posicion = buscar_estudiante_por_nombre(name)
+        if posicion == -1:
+            print("No existe ese estudiante")
+        else:
+            baja_alumno_nombre(posicion)
+            print("Estudiante eliminado\n")
+
+    if name == "*":
+        id_est = int(input(
+            "Seleccione el ID del usuario, si no lo conoce coloque un numero mayor a 7 o menor a 0: "
+        ))
+        if 0 <= int(id_est) < 8:
+            baja_alumno_id(id_est)
+            print("Estudiante eliminado")
+        else:
+            print("Necesitamos más datos para eliminar al usuario")
 
 """
 var:
@@ -1346,10 +1394,10 @@ def main():
 
     # Solo para ver los cambios de datos
     # print("-------------------------------")
-    # imprimir_registro_puntero_alumnos()
-    # print("-------------------------------")
-    # listado_alumnos(AF_ALUMNOS)
-    # print("-------------------------------")
+    imprimir_registro_puntero_alumnos()
+    print("-------------------------------")
+    listado_alumnos(AF_ALUMNOS)
+    print("-------------------------------")
     # imprimir_registro_puntero_likes()
     # print("-------------------------------")
     # listado_likes()
