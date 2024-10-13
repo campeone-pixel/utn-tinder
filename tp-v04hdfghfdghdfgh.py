@@ -4,7 +4,7 @@ import math
 import os.path
 import pickle
 import random
-
+import time
 """
 Integrantes:
 - Poses, Matias Abel
@@ -294,46 +294,6 @@ def pedir_fecha():
     return str(anio) + "/" + mes_str + "/" + dia_str
 
 
-# --------------------- Validaciones ---------------------------
-
-
-def es_email_valido_simple(email):
-    arroba_encontrada = False
-    dominio_encontrado = False
-    dominio = ""
-    i = 0
-    while i < len(email) and not dominio_encontrado:
-        if email[i] == "@":
-            arroba_encontrada = True
-            dominio = email[i + 1 :]
-            dominio_encontrado = True
-        i += 1
-    dominios_validos = ["gmail.com", "gmail.com.ar", "hotmail.com", "hotmail.com.ar"]
-    if arroba_encontrada and dominio in dominios_validos:
-        return True
-    else:
-        return False
-
-
-def ingresar_email():
-    email = input("Ingrese el email: ")
-    while not es_email_valido_simple(email) or len(email) > 32:
-        print("El email ingresado no es válido o excede los 32 caracteres.")
-        email = input("Ingrese un email válido (gmail o hotmail): ")
-    return email
-
-
-def ingresar_con_validacion(mensaje, longitud_max):
-    while True:
-        dato = input(mensaje)
-        if len(dato) > longitud_max:
-            print(
-                f"El campo no puede tener más de {longitud_max} caracteres. Ingresaste: {len(dato)}"
-            )
-        else:
-            return dato
-
-
 # ---- Alumnos ----
 class Alu:
     def __init__(self):
@@ -441,56 +401,48 @@ def modificacion_alum(email):
         archivo_logico.seek(posicion, 0)
         registro_convert = reconvertir_a_alu(pickle.load(archivo_logico))
 
-        print(f"Email: {registro_convert.email}")
-        respuesta = ""
-        while respuesta not in opciones:
-            respuesta = input("¿Desea modificar el email? (s/n): ").lower()
-        if respuesta == "s":
-            registro_convert.email = ingresar_email()
-
         print(f"Nombre: {registro_convert.nombre}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar el nombre? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.nombre = ingresar_con_validacion(
-                "Ingrese nuevo nombre (máx. 32 caracteres): ", 32
-            )
+            registro_convert.nombre = input("Ingrese nuevo nombre: ")
 
-        print(f"Contraseña: {registro_convert.contrasenia}")
+        print(f"Email: {registro_convert.email}")
         respuesta = ""
         while respuesta not in opciones:
-            respuesta = input("¿Desea modificar la contraseña? (s/n): ").lower()
+            respuesta = input("¿Desea modificar el email? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.contrasenia = ingresar_con_validacion(
-                "Ingrese nueva contraseña (máx. 32 caracteres): ", 32
-            )
+            registro_convert.email = input("Ingrese nuevo email: ")
 
         print(f"Sexo: {registro_convert.sexo}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar el sexo? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.sexo = input("Ingrese nuevo sexo (M/F): ").lower()
-            while registro_convert.sexo not in ["f", "m"]:
-                registro_convert.sexo = input("Ingrese nuevo sexo (M/F): ").lower()
+            registro_convert.sexo = input("Ingrese nuevo sexo (M/F): ")
+
+        print(f"Contraseña: {registro_convert.contrasenia}")
+        respuesta = ""
+        while respuesta not in opciones:
+            respuesta = input("¿Desea modificar la contraseña? (s/n): ").lower()
+        if respuesta == "s":
+            registro_convert.contrasenia = input("Ingrese nueva contraseña: ")
 
         print(f"Hobbies: {registro_convert.hobbies}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar los hobbies? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.hobbies = ingresar_con_validacion(
-                "Ingrese nuevos hobbies (máx. 255 caracteres): ", 255
-            )
+            registro_convert.hobbies = input("Ingrese nuevos hobbies: ")
 
         print(f"Materia favorita: {registro_convert.materia_favorita}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar la materia favorita? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.materia_favorita = ingresar_con_validacion(
-                "Ingrese nueva materia favorita (máx. 16 caracteres): ", 16
+            registro_convert.materia_favorita = input(
+                "Ingrese nueva materia favorita: "
             )
 
         print(f"Deporte favorito: {registro_convert.deporte_favorito}")
@@ -498,8 +450,8 @@ def modificacion_alum(email):
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar el deporte favorito? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.deporte_favorito = ingresar_con_validacion(
-                "Ingrese nuevo deporte favorito (máx. 16 caracteres): ", 16
+            registro_convert.deporte_favorito = input(
+                "Ingrese nuevo deporte favorito: "
             )
 
         print(f"Materia fuerte: {registro_convert.materia_fuerte}")
@@ -507,45 +459,35 @@ def modificacion_alum(email):
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar la materia fuerte? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.materia_fuerte = ingresar_con_validacion(
-                "Ingrese nueva materia fuerte (máx. 16 caracteres): ", 16
-            )
+            registro_convert.materia_fuerte = input("Ingrese nueva materia fuerte: ")
 
         print(f"Materia débil: {registro_convert.materia_debil}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar la materia débil? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.materia_debil = ingresar_con_validacion(
-                "Ingrese nueva materia débil (máx. 16 caracteres): ", 16
-            )
+            registro_convert.materia_debil = input("Ingrese nueva materia débil: ")
 
         print(f"Biografía: {registro_convert.biografia}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar la biografía? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.biografia = ingresar_con_validacion(
-                "Ingrese nueva biografía (máx. 255 caracteres): ", 255
-            )
+            registro_convert.biografia = input("Ingrese nueva biografía: ")
 
         print(f"País: {registro_convert.pais}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar el país? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.pais = ingresar_con_validacion(
-                "Ingrese nuevo país (máx. 32 caracteres): ", 32
-            )
+            registro_convert.pais = input("Ingrese nuevo país: ")
 
         print(f"Ciudad: {registro_convert.ciudad}")
         respuesta = ""
         while respuesta not in opciones:
             respuesta = input("¿Desea modificar la ciudad? (s/n): ").lower()
         if respuesta == "s":
-            registro_convert.ciudad = ingresar_con_validacion(
-                "Ingrese nueva ciudad (máx. 32 caracteres): ", 32
-            )
+            registro_convert.ciudad = input("Ingrese nueva ciudad: ")
 
         print(
             f"Fecha de nacimiento: {registro_convert.fecha_nacimiento.strftime('%Y-%m/%d')}"
@@ -570,53 +512,36 @@ def modificacion_alum(email):
 
 def alta_alumno():
     nuevo_alumno = Alu()
-    nuevo_alumno.nombre = ingresar_con_validacion(
-        "Ingrese el nombre del alumno (máx. 32 caracteres): ", 32
-    )
-    nuevo_alumno.email = ingresar_email()
+    nuevo_alumno.nombre = input("Ingrese el nombre del alumno: ")
+
+    nuevo_alumno.email = input("Ingrese el email del alumno: ")
     while existe_mail("alumnos", nuevo_alumno.email):
         print("Email existente. Ingrese un nuevo mail")
-        nuevo_alumno.email = ingresar_email()
+        nuevo_alumno.email = input("Ingrese el email del alumno: ")
+
     nuevo_alumno.sexo = ""
     while nuevo_alumno.sexo not in ["M", "F"]:
         nuevo_alumno.sexo = input("Ingrese el sexo (M/F): ").upper()
-    nuevo_alumno.contrasenia = ingresar_con_validacion(
-        "Ingrese la contraseña (máx. 32 caracteres): ", 32
-    )
-    nuevo_alumno.hobbies = ingresar_con_validacion(
-        "Ingrese los hobbies (máx. 255 caracteres): ", 255
-    )
-    nuevo_alumno.materia_favorita = ingresar_con_validacion(
-        "Ingrese la materia favorita (máx. 16 caracteres): ", 16
-    )
-    nuevo_alumno.deporte_favorito = ingresar_con_validacion(
-        "Ingrese el deporte favorito (máx. 16 caracteres): ", 16
-    )
-    nuevo_alumno.materia_fuerte = ingresar_con_validacion(
-        "Ingrese la materia fuerte (máx. 16 caracteres): ", 16
-    )
-    nuevo_alumno.materia_debil = ingresar_con_validacion(
-        "Ingrese la materia débil (máx. 16 caracteres): ", 16
-    )
-    nuevo_alumno.biografia = ingresar_con_validacion(
-        "Ingrese la biografía (máx. 255 caracteres): ", 255
-    )
-    nuevo_alumno.pais = ingresar_con_validacion(
-        "Ingrese el país (máx. 32 caracteres): ", 32
-    )
-    nuevo_alumno.ciudad = ingresar_con_validacion(
-        "Ingrese la ciudad (máx. 32 caracteres): ", 32
-    )
+    nuevo_alumno.contrasenia = input("Ingrese la contraseña: ")
+    nuevo_alumno.hobbies = input("Ingrese los hobbies: ")
+    nuevo_alumno.materia_favorita = input("Ingrese la materia favorita: ")
+    nuevo_alumno.deporte_favorito = input("Ingrese el deporte favorito: ")
+    nuevo_alumno.materia_fuerte = input("Ingrese la materia fuerte: ")
+    nuevo_alumno.materia_debil = input("Ingrese la materia débil: ")
+    nuevo_alumno.biografia = input("Ingrese la biografía: ")
+    nuevo_alumno.pais = input("Ingrese el país: ")
+    nuevo_alumno.ciudad = input("Ingrese la ciudad: ")
     fecha_nueva = pedir_fecha()
     nuevo_alumno.fecha_nacimiento = datetime.strptime(fecha_nueva, "%Y/%m/%d")
     nuevo_alumno.nro_id = generador_id("alumnos")
+
     clase = formatear_alum(nuevo_alumno)
     archivo_logico = abrir_archivo(AF_ALUMNOS)
     archivo_logico.seek(0, 2)
     pickle.dump(clase, archivo_logico)
     archivo_logico.flush()
+
     archivo_logico.close()
-    print("Alumno registrado exitosamente.")
 
 
 def baja_alumno_id(nro_id):
@@ -721,6 +646,33 @@ def reconvertir_a_mod(registro_formateado):
     return moder
 
 
+def mod_mod_con_id(nro_id):
+    opciones = ["s", "n"]
+    posicion = pos_mod_id(nro_id)
+    if posicion != -1:
+        archivo_logico = abrir_archivo(AF_MODERADORES)
+        registro_convert = reconvertir_a_mod(pickle.load(archivo_logico))
+
+        print(f"Email: {registro_convert.email}")
+        respuesta = ""
+        while respuesta not in opciones:
+            respuesta = input("¿Desea modificar el email? (s/n): ").lower()
+        if respuesta == "s":
+            registro_convert.email = input("Ingrese nuevo email: ")
+
+        print(f"Contraseña: {registro_convert.contrasenia}")
+        respuesta = ""
+        while respuesta not in opciones:
+            respuesta = input("¿Desea modificar la contraseña? (s/n): ").lower()
+        if respuesta == "s":
+            registro_convert.contrasenia = input("Ingrese nueva contraseña: ")
+
+        archivo_logico.seek(posicion, 0)
+        registro_formateado = formatear_mod(registro_convert)
+        pickle.dump(registro_formateado, archivo_logico)
+        archivo_logico.flush()
+
+
 def pos_mod_id(nro_id):
     archivo_logico = abrir_archivo(AF_MODERADORES)
     tam_archivo = os.path.getsize(AF_MODERADORES)
@@ -770,13 +722,9 @@ def reg_mod_email(email):
 
 def alta_moderador():
     nuevo_moderador = Mod()
-    nuevo_moderador.email = ingresar_email()
-    while existe_mail("moderador", nuevo_moderador.email):
-        print("Email existente. Ingrese un nuevo email.")
-        nuevo_moderador.email = ingresar_email()
-    nuevo_moderador.contrasenia = ingresar_con_validacion(
-        "Ingrese la contraseña del moderador (máx. 32 caracteres): ", 32
-    )
+    nuevo_moderador.email = input("Ingrese el email del moderador: ")
+    nuevo_moderador.contrasenia = input("Ingrese la contraseña del moderador: ")
+    os.system("cls")
     nuevo_moderador.estado = True
     nuevo_moderador.nro_id = generador_id("moderador")
     clase = formatear_mod(nuevo_moderador)
@@ -785,7 +733,6 @@ def alta_moderador():
     pickle.dump(clase, archivo_logico)
     archivo_logico.flush()
     archivo_logico.close()
-    print("Moderador registrado exitosamente.")
 
 
 def baja_moderador(nro_id):
@@ -804,6 +751,9 @@ def baja_moderador(nro_id):
 
 def modificar_moderador_por_email(
     email,
+    nuevo_email=None,
+    nueva_contrasenia=None,
+    nuevo_estado=None,
     nuevos_reportes_aceptados=None,
     nuevos_reportes_ignorados=None,
     nuevos_reportes_procesados=None,
@@ -815,6 +765,12 @@ def modificar_moderador_por_email(
     archivo_logico = abrir_archivo(AF_MODERADORES)
     archivo_logico.seek(posicion, 0)
     registro = reconvertir_a_mod(pickle.load(archivo_logico))
+    if nuevo_email is not None:
+        registro.email = nuevo_email
+    if nueva_contrasenia is not None:
+        registro.contrasenia = nueva_contrasenia
+    if nuevo_estado is not None:
+        registro.estado = nuevo_estado
     if nuevos_reportes_aceptados is not None:
         registro.reportes_aceptados = nuevos_reportes_aceptados
     if nuevos_reportes_ignorados is not None:
@@ -902,10 +858,8 @@ def reg_admin_email(email):
 
 def alta_administrador():
     nuevo_administrador = Admin()
-    nuevo_administrador.email = ingresar_email()
-    nuevo_administrador.contrasenia = ingresar_con_validacion(
-        "Ingrese la contraseña del administrador (máx. 32 caracteres): ", 32
-    )
+    nuevo_administrador.email = input("Ingrese el email del administrador: ")
+    nuevo_administrador.contrasenia = input("Ingrese la contraseña del administrador: ")
     nuevo_administrador.nro_id = generador_id("administrador")
     clase = formatear_admin(nuevo_administrador)
     archivo_logico = abrir_archivo(AF_ADMINISTRADORES)
@@ -1383,6 +1337,8 @@ def bonustrack_punto():
             return
         print("alumno: ", r.nombre, "puntos: ", r.punto)
 
+    time.sleep(2)
+    os.system("cls")
     alum.close()
 
 
@@ -1390,17 +1346,17 @@ def ruleta():
     print("Ingresar las probalidades de la persona A, B y C")
     seguir = True
     while seguir:
-        match_persona_a = input("Ingrese la probalidad de match con la persona A")
-        match_persona_b = input("Ingrese la probalidad de match con la persona B")
-        match_persona_c = input("Ingrese la probalidad de match con la persona C")
+        match_persona_a = input("Ingrese la probalidad de match con la persona A ")
+        match_persona_b = input("Ingrese la probalidad de match con la persona B ")
+        match_persona_c = input("Ingrese la probalidad de match con la persona C ")
         while not (
             match_persona_a.isdigit()
             and match_persona_b.isdigit()
             and match_persona_c.isdigit()
         ):
-            match_persona_a = input("Ingrese la probalidad de match con la persona A")
-            match_persona_a = input("Ingrese la probalidad de match con la persona B")
-            match_persona_c = input("Ingrese la probalidad de match con la persona C")
+            match_persona_a = input("Ingrese la probalidad de match con la persona A ")
+            match_persona_a = input("Ingrese la probalidad de match con la persona B ")
+            match_persona_c = input("Ingrese la probalidad de match con la persona C ")
         match_persona_a = int(match_persona_a)
         match_persona_b = int(match_persona_a)
         match_persona_c = int(match_persona_c)
@@ -1412,9 +1368,9 @@ def ruleta():
             print("La persona seleccionada es: ", ganador)
         else:
             print("El porcentaje total no esta dentro del 100 por ciento")
-        respuesta = input("quiere seguir intentado? Si/No").capitalize()
+        respuesta = input("quiere seguir intentado? Si/No : ").capitalize()
         while not (respuesta == "S" or respuesta == "N"):
-            respuesta = input("Quieres seguir intentado? S / N :").capitalize()
+            respuesta = input("Quieres seguir intentado? S / N : ").capitalize()
         if respuesta == "S":
             seguir = True
         else:
@@ -1539,8 +1495,7 @@ def gestionar_perfil():
             modificacion_alum(informacion_login[0])
             print("Datos Modificados")
         elif opcion == "2":
-            estudiante1 = reg_alumno_email(informacion_login[0])
-            baja_alumno_id(estudiante1.nro_id)
+            baja_alumno_id(informacion_login[0])
             informacion_login[0] = ""
             print("Se ha dado de baja el perfil")
             opcion = "0"
@@ -1588,10 +1543,14 @@ def reportar_candidato():
 
             if nro_id_reportante == nro_id_reportado:
                 print("No puedes reportarte a ti mismo.")
+                time.sleep(1)
+                os.system("cls")
             else:
                 razon = input("Describa la razón del reporte: ")
                 alta_reporte(nro_id_reportante, nro_id_reportado, razon)
                 print("Se realizó el reporte con éxito.")
+                time.sleep(1)
+                os.system("cls")
         else:
             print("No existe el alumno.")
     elif respuesta == "id":
@@ -1606,6 +1565,8 @@ def reportar_candidato():
                 razon = input("Describa la razón del reporte: ")
                 alta_reporte(nro_id_reportante, nro_id_reportado, razon)
                 print("Se realizó el reporte con éxito.")
+                time.sleep(1)
+                os.system("cls")
         else:
             print("No existe el alumno.")
 
@@ -1729,6 +1690,7 @@ def imprimir_menu_administrador():
 def eliminar_usuario():
     opcion = ""
     while opcion == "" and opcion != "s":
+        os.system("cls")
         print("'s' Si desea salir")
         opcion = input("¿Qué desea eliminar? Estudiante 'e', Moderador 'm': ").lower()
         while opcion not in ["e", "m", "s"]:
@@ -1754,6 +1716,8 @@ def eliminar_usuario():
                 print(f"Alumno con ID {nro_id} eliminado.")
             else:
                 print("No se encontró el alumno.")
+                time.sleep(1)
+                os.system("cls")
         elif opcion == "m":
             listado_moderadores()
             nro_id = input("Seleccione el usuario que desea eliminar por id: ")
@@ -1771,6 +1735,8 @@ def eliminar_usuario():
                 print(f"Moderador con ID {nro_id} eliminado.")
             else:
                 print("No se encontró el moderador.")
+                time.sleep(1)
+                os.system("cls")
 
         else:
             print("Volviendo al menú anterior...")
@@ -1784,6 +1750,7 @@ def gestionar_usuarios():
         print("2. Dar de alta un moderador")
         print("3. Volver")
         opcion = input("Selecciona una opción: ")
+        os.system("cls")
         if opcion == "1":
             eliminar_usuario()
         elif opcion == "2":
@@ -1798,6 +1765,7 @@ def administrador():
     opcion = ""
     while opcion != "5":
         opcion = imprimir_menu_administrador()
+        os.system("cls")
         if opcion == "1":
             gestionar_usuarios()
             if not conectado():
@@ -1936,6 +1904,7 @@ var:
 def gestionar_reportes():
     opcion = ""
     while opcion != "2":
+        os.system("cls")
         print("1. Ver Reportes")
         print("2. Volver")
         opcion = input("Seleccione una opción: ")
@@ -1944,6 +1913,7 @@ def gestionar_reportes():
             ver_reportes()
         elif opcion == "2":
             print("Volviendo al menú principal...\n")
+            time.sleep(1)
         else:
             print("Opción no válida. Por favor, seleccione una opción válida.\n")
 
@@ -1960,6 +1930,7 @@ def ver_reportes():
     tam = os.path.getsize(AF_REPORTES)
     if tam == 0:
         print("No hay reportes para mostrar.")
+        time.sleep(1)
     else:
         archivo_logico = abrir_archivo(AF_REPORTES)
         archivo_logico.seek(0, 0)
@@ -1970,8 +1941,10 @@ def ver_reportes():
                 reporte = reconvertir_a_reporte(pickle.load(archivo_logico))
             except EOFError:
                 print("Error: Fin de archivo alcanzado inesperadamente.")
+                time.sleep(1)
                 return
             if reporte.estado == 0:
+                os.system("cls")
                 reportante_activo = estudiante_activo_por_mail(
                     reg_alumno_id(reporte.id_reportante).email
                 )
@@ -2020,6 +1993,7 @@ def ver_reportes():
                         salir = True
         if not reportes_pendientes:
             print("No hay reportes para revisar.")
+            time.sleep(1)
         archivo_logico.close()
 
 
