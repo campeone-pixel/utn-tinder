@@ -4,7 +4,9 @@ import math
 import os.path
 import pickle
 import random
+import time
 
+tiempo_espera = 5
 """
 Integrantes:
 - Poses, Matias Abel
@@ -13,6 +15,7 @@ Integrantes:
 - Bellocci, Francisco
 Comision 11
 """
+
 
 # ------ Funciones para imprimir los datos --------
 
@@ -777,6 +780,7 @@ def alta_moderador():
     nuevo_moderador.contrasenia = ingresar_con_validacion(
         "Ingrese la contraseña del moderador (máx. 32 caracteres): ", 32
     )
+    os.system("cls")
     nuevo_moderador.estado = True
     nuevo_moderador.nro_id = generador_id("moderador")
     clase = formatear_mod(nuevo_moderador)
@@ -1383,6 +1387,9 @@ def bonustrack_punto():
             return
         print("alumno: ", r.nombre, "puntos: ", r.punto)
 
+    time.sleep(tiempo_espera)
+    os.system("cls")
+    alum.close()
     alum.close()
 
 
@@ -1412,10 +1419,11 @@ def ruleta():
             print("La persona seleccionada es: ", ganador)
         else:
             print("El porcentaje total no esta dentro del 100 por ciento")
-        respuesta = input("quiere seguir intentado? Si/No").capitalize()
-        while not (respuesta == "S" or respuesta == "N"):
-            respuesta = input("Quieres seguir intentado? S / N :").capitalize()
-        if respuesta == "S":
+
+        respuesta = input("quiere seguir intentado? Si/No").lower()
+        while respuesta not in ["si", "no"]:
+            respuesta = input("quiere seguir intentado? Si/No").lower()
+        if respuesta == "si":
             seguir = True
         else:
             seguir = False
@@ -1588,10 +1596,14 @@ def reportar_candidato():
 
             if nro_id_reportante == nro_id_reportado:
                 print("No puedes reportarte a ti mismo.")
+                time.sleep(tiempo_espera)
+                os.system("cls")
             else:
                 razon = input("Describa la razón del reporte: ")
                 alta_reporte(nro_id_reportante, nro_id_reportado, razon)
                 print("Se realizó el reporte con éxito.")
+                time.sleep(tiempo_espera)
+                os.system("cls")
         else:
             print("No existe el alumno.")
     elif respuesta == "id":
@@ -1602,10 +1614,14 @@ def reportar_candidato():
             nro_id_reportado = reconvertir_a_alu(pickle.load(al_alumno)).nro_id
             if nro_id_reportante == nro_id_reportado:
                 print("No puedes reportarte a ti mismo.")
+                time.sleep(tiempo_espera)
+                os.system("cls")
             else:
                 razon = input("Describa la razón del reporte: ")
                 alta_reporte(nro_id_reportante, nro_id_reportado, razon)
                 print("Se realizó el reporte con éxito.")
+                time.sleep(tiempo_espera)
+                os.system("cls")
         else:
             print("No existe el alumno.")
 
@@ -1691,6 +1707,7 @@ def estudiante():
             print("Opción inválida\n")
         if not conectado():
             opcion = "8"
+    os.system("cls")
 
 
 """
@@ -1714,6 +1731,7 @@ def menu_moderador():
             print("Opción no válida. Por favor, seleccione una opción válida.")
         if not conectado():
             opcion = "3"
+    os.system("cls")
 
 
 def imprimir_menu_administrador():
@@ -1729,6 +1747,7 @@ def imprimir_menu_administrador():
 def eliminar_usuario():
     opcion = ""
     while opcion == "" and opcion != "s":
+        os.system("cls")
         print("'s' Si desea salir")
         opcion = input("¿Qué desea eliminar? Estudiante 'e', Moderador 'm': ").lower()
         while opcion not in ["e", "m", "s"]:
@@ -1754,6 +1773,8 @@ def eliminar_usuario():
                 print(f"Alumno con ID {nro_id} eliminado.")
             else:
                 print("No se encontró el alumno.")
+                time.sleep(tiempo_espera)
+                os.system("cls")
         elif opcion == "m":
             listado_moderadores()
             nro_id = input("Seleccione el usuario que desea eliminar por id: ")
@@ -1771,7 +1792,8 @@ def eliminar_usuario():
                 print(f"Moderador con ID {nro_id} eliminado.")
             else:
                 print("No se encontró el moderador.")
-
+                time.sleep(tiempo_espera)
+                os.system("cls")
         else:
             print("Volviendo al menú anterior...")
 
@@ -1784,6 +1806,7 @@ def gestionar_usuarios():
         print("2. Dar de alta un moderador")
         print("3. Volver")
         opcion = input("Selecciona una opción: ")
+        os.system("cls")
         if opcion == "1":
             eliminar_usuario()
         elif opcion == "2":
@@ -1798,6 +1821,7 @@ def administrador():
     opcion = ""
     while opcion != "5":
         opcion = imprimir_menu_administrador()
+        os.system("cls")
         if opcion == "1":
             gestionar_usuarios()
             if not conectado():
@@ -1815,6 +1839,7 @@ def administrador():
             print("Opción inválida\n")
         if not conectado():
             opcion = "5"
+    os.system("cls")
 
 
 def reporte_estadistico():
@@ -1936,6 +1961,7 @@ var:
 def gestionar_reportes():
     opcion = ""
     while opcion != "2":
+        os.system("cls")
         print("1. Ver Reportes")
         print("2. Volver")
         opcion = input("Seleccione una opción: ")
@@ -1960,6 +1986,7 @@ def ver_reportes():
     tam = os.path.getsize(AF_REPORTES)
     if tam == 0:
         print("No hay reportes para mostrar.")
+        time.sleep(tiempo_espera)
     else:
         archivo_logico = abrir_archivo(AF_REPORTES)
         archivo_logico.seek(0, 0)
@@ -1970,8 +1997,10 @@ def ver_reportes():
                 reporte = reconvertir_a_reporte(pickle.load(archivo_logico))
             except EOFError:
                 print("Error: Fin de archivo alcanzado inesperadamente.")
+                time.sleep(tiempo_espera)
                 return
             if reporte.estado == 0:
+                os.system("cls")
                 reportante_activo = estudiante_activo_por_mail(
                     reg_alumno_id(reporte.id_reportante).email
                 )
@@ -2020,6 +2049,7 @@ def ver_reportes():
                         salir = True
         if not reportes_pendientes:
             print("No hay reportes para revisar.")
+            time.sleep(tiempo_espera)
         archivo_logico.close()
 
 
